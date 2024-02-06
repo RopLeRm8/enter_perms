@@ -6,6 +6,11 @@ import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import EngineeringIcon from "@mui/icons-material/Engineering";
 import TimeToLeaveIcon from "@mui/icons-material/TimeToLeave";
 import DirectionsWalkIcon from "@mui/icons-material/DirectionsWalk";
+import NoEncryptionGmailerrorredIcon from "@mui/icons-material/NoEncryptionGmailerrorred";
+import KeyIcon from "@mui/icons-material/Key";
+import HttpsIcon from "@mui/icons-material/Https";
+import PasswordIcon from "@mui/icons-material/Password";
+import LockPersonIcon from "@mui/icons-material/LockPerson";
 
 const initialState = {
   idNumber: "",
@@ -14,7 +19,7 @@ const initialState = {
     lastName: "",
   },
   requestFor: "",
-  industryWorker: "",
+  industryWorker: -1,
   entryReason: "",
   escortDetails: {
     misparIshi: "",
@@ -170,25 +175,29 @@ export default function useGetSteps() {
       options: [
         {
           optionname: "בלמס",
+          icon: <NoEncryptionGmailerrorredIcon />,
         },
         {
           optionname: "שמור",
+          icon: <KeyIcon />,
         },
         {
           optionname: "סודי",
+          icon: <PasswordIcon />,
         },
         {
           optionname: "סודי ביותר",
+          icon: <HttpsIcon />,
         },
         {
           optionname: "סודי ביותר לשוס",
+          icon: <LockPersonIcon />,
         },
       ],
-      isSivug: true,
       fieldName: "classificationLevel",
     },
     {
-      name: "הזן תקופת האישר",
+      name: "הזן תקופת האישור",
       isDate: true,
       fieldName: "approvalPeriod",
     },
@@ -219,7 +228,6 @@ export default function useGetSteps() {
 
   return {
     state,
-    getFieldValue,
     setFieldValue,
     nextStep,
     previousStep,

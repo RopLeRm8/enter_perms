@@ -8,7 +8,6 @@ interface IStep {
   fieldName: string;
   options: IOptions[];
   isBig?: boolean;
-  isSivug?: boolean;
   isDate?: boolean;
   isRehev?: boolean;
   twoFields?: boolean;

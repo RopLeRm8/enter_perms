@@ -17,8 +17,7 @@ import {
 } from "@mui/material";
 
 export default function ClientTicket() {
-  const { state, setFieldValue, getFieldValue, nextStep, previousStep, steps } =
-    useGetSteps();
+  const { state, setFieldValue, nextStep, previousStep, steps } = useGetSteps();
   const { todayFormat, maxDateFormat } = useHandleDates();
   const currentStep = steps[state.currentStep];
 
@@ -85,9 +84,13 @@ export default function ClientTicket() {
           }
         />
       </Box>
-      <Typography sx={{ fontSize: "150%", color: theme.palette.primary.main }}>
-        בקשה לאישור כניסה - אזרח
-      </Typography>
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <Typography
+          sx={{ fontSize: "150%", color: theme.palette.primary.main }}
+        >
+          בקשה לאישור כניסה - אזרח
+        </Typography>
+      </Box>
       <Box
         sx={{
           display: "flex",
@@ -97,7 +100,11 @@ export default function ClientTicket() {
         }}
       >
         <Typography
-          sx={{ fontSize: "230%", color: theme.palette.primary.main }}
+          sx={{
+            fontSize: "230%",
+            color: theme.palette.primary.main,
+            direction: "rtl",
+          }}
         >
           {currentStep.name}
         </Typography>
@@ -241,6 +248,16 @@ export default function ClientTicket() {
                       mt: 2,
                       fontFamily: "Assistant",
                       width: "15%",
+                      "& .MuiInputBase-input": {
+                        color: theme.palette.primary.main,
+                        fontFamily: "Assistant",
+                        fontSize: "130%",
+                      },
+                      "& .MuiInputBase-input::placeholder": {
+                        color: "gray",
+                        fontFamily: "Assistant",
+                        fontSize: "110%",
+                      },
                     }}
                     value={state[currentStep.fieldName].vehicleType}
                     onChange={(e) => {

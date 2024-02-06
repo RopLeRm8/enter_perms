@@ -1,6 +1,5 @@
 import { theme } from "@/providers/ThemeProvider";
 import { ThemeProvider } from "@mui/material";
-import "@/css/global.css";
 
 export const metadata = {
   title: "אתר בקשות כניסה - אבטחת מידע",
@@ -14,7 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body style={{ margin: 0 }}>
         <ThemeProvider theme={theme}>{children}</ThemeProvider>
       </body>
     </html>
