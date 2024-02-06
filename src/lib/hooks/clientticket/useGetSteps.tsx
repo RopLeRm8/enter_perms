@@ -1,4 +1,4 @@
-import { IStep } from "@/types/hooks";
+import { ActionType, IState, IStep } from "@/types/hooks";
 import { useReducer } from "react";
 import EmojiPeopleIcon from "@mui/icons-material/EmojiPeople";
 import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
@@ -47,7 +47,7 @@ const PREVIOUS_STEP = "PREVIOUS_STEP";
 const TWO_NEXT_STEPS = "TWO_NEXT_STEPS";
 const TWO_PREVIOUS_STEP = "TWO_PREVIOUS_STEPS";
 export default function useGetSteps() {
-  function formReducer(state, action) {
+  function formReducer(state: IState, action: ActionType) {
     switch (action.type) {
       case SET_FIELD_VALUE:
         return {
@@ -79,11 +79,11 @@ export default function useGetSteps() {
     }
   }
 
-  const setFieldValue = <T,>(field: string, value: T) => {
+  const setFieldValue = (field: string, value: string) => {
     dispatch({ type: SET_FIELD_VALUE, payload: { field, value } });
   };
 
-  const getFieldValue = (field: string) => {
+  const getFieldValue = (field: keyof IState) => {
     return state[field];
   };
 

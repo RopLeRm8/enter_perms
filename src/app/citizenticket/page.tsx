@@ -11,6 +11,7 @@ import {
   MenuItem,
   MobileStepper,
   Select,
+  SelectChangeEvent,
   TextField,
   Typography,
   useTheme,
@@ -130,7 +131,7 @@ export default function ClientTicket() {
                   placeholder="שם פרטי"
                   dir="rtl"
                   value={state.fullName.firstName}
-                  onChange={(e) =>
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     handleInputChange("fullName.firstName", e.target.value)
                   }
                 />
@@ -152,7 +153,7 @@ export default function ClientTicket() {
                   placeholder="שם משפחה"
                   dir="rtl"
                   value={state.fullName.lastName}
-                  onChange={(e) =>
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     handleInputChange("fullName.lastName", e.target.value)
                   }
                 />
@@ -179,7 +180,7 @@ export default function ClientTicket() {
                 multiline
                 minRows={4}
                 value={state[currentStep.fieldName]}
-                onChange={(e) =>
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   handleInputChange(currentStep.fieldName, e.target.value)
                 }
               />
@@ -207,7 +208,7 @@ export default function ClientTicket() {
                     }}
                     dir="rtl"
                     value={state[currentStep.fieldName].vehicleNum}
-                    onChange={(e) =>
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       handleInputChange(
                         "vehicleDetails.vehicleNum",
                         e.target.value
@@ -235,7 +236,7 @@ export default function ClientTicket() {
                     }}
                     dir="rtl"
                     value={state[currentStep.fieldName].vehicleCol}
-                    onChange={(e) =>
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       handleInputChange(
                         "vehicleDetails.vehicleCol",
                         e.target.value
@@ -247,7 +248,7 @@ export default function ClientTicket() {
                     sx={{
                       mt: 2,
                       fontFamily: "Assistant",
-                      width: "15%",
+                      width: "16rem",
                       "& .MuiInputBase-input": {
                         color: theme.palette.primary.main,
                         fontFamily: "Assistant",
@@ -260,7 +261,7 @@ export default function ClientTicket() {
                       },
                     }}
                     value={state[currentStep.fieldName].vehicleType}
-                    onChange={(e) => {
+                    onChange={(e: SelectChangeEvent<string>) => {
                       handleInputChange(
                         "vehicleDetails.vehicleType",
                         e.target.value
@@ -299,7 +300,7 @@ export default function ClientTicket() {
                     }}
                     dir="rtl"
                     value={state[currentStep.fieldName].misparIshi}
-                    onChange={(e) =>
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       handleInputChange(
                         "escortDetails.misparIshi",
                         e.target.value
@@ -327,7 +328,7 @@ export default function ClientTicket() {
                     }}
                     dir="rtl"
                     value={state[currentStep.fieldName].name}
-                    onChange={(e) =>
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       handleInputChange("escortDetails.name", e.target.value)
                     }
                   />
@@ -352,7 +353,7 @@ export default function ClientTicket() {
                     }}
                     dir="rtl"
                     value={state[currentStep.fieldName].phone}
-                    onChange={(e) =>
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       handleInputChange("escortDetails.phone", e.target.value)
                     }
                   />
@@ -378,7 +379,7 @@ export default function ClientTicket() {
                   }}
                   dir="rtl"
                   value={state[currentStep.fieldName]}
-                  onChange={(e) =>
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     handleInputChange(currentStep.fieldName, e.target.value)
                   }
                 />
@@ -400,7 +401,7 @@ export default function ClientTicket() {
               type="date"
               value={state[currentStep.fieldName].startDate}
               defaultValue={todayFormat}
-              onChange={(e) =>
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 handleInputChange("approvalPeriod.startDate", e.target.value)
               }
               sx={{ mx: 1 }}
@@ -414,7 +415,7 @@ export default function ClientTicket() {
                 min: todayFormat,
                 max: maxDateFormat,
               }}
-              onChange={(e) =>
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 handleInputChange("approvalPeriod.endDate", e.target.value)
               }
               sx={{ mx: 1 }}
@@ -447,8 +448,8 @@ export default function ClientTicket() {
                   }}
                   sx={{
                     ".MuiBadge-badge": {
-                      top: 30,
-                      right: 20,
+                      top: "20%",
+                      right: "10%",
                       border: `2px solid ${theme.palette.background.paper}`,
                       padding: "0 4px",
                     },
@@ -463,10 +464,10 @@ export default function ClientTicket() {
                     sx={{
                       px: 8,
                       minWidth: "20%",
-                      width: "10rem",
+                      width: "8vw",
                       borderRadius: "100px",
-                      height: "18vh",
-                      maxHeight: "18vh",
+                      height: "16vh",
+                      maxHeight: "16vh",
                     }}
                     onClick={() => {
                       handleInputChange(
