@@ -4,10 +4,14 @@ interface IOptions {
   optionname: string;
   icon?: JSX.Element;
 }
-
+interface IAction {
+  type: string;
+  payload?: { fieldPath: string; value: string | INilve[] | Date };
+}
 interface IStep {
   name: string;
   fieldName: string;
+  label?: string;
   options: IOptions[];
   isBig?: boolean;
   isDate?: boolean;
@@ -17,20 +21,24 @@ interface IStep {
   onlyNum?: boolean;
   isNilvim?: boolean;
   isSikum?: boolean;
+  isTz?: boolean;
+  validateFn?: (input: string, title?: string) => boolean;
 }
 
 interface IState {
+  [key: string]: any;
   idNumber: string;
   fullName: {
     firstName: string;
     lastName: string;
   };
   requestFor: string;
-  industryWorker: number;
+  industryWorker: string;
   entryReason: string;
   escortDetails: {
     misparIshi: string;
-    name: string;
+    firstName: string;
+    lastName: string;
     phone: string;
   };
   classificationLevel: string;
@@ -47,6 +55,7 @@ interface IState {
   };
   nilvim: INilve[];
   currentStep: number;
+  modalOpen: boolean;
 }
 
 interface IUseGetSteps {
@@ -65,4 +74,4 @@ type ActionType =
   | { type: "PREVIOUS_STEP" }
   | { type: "TWO_PREVIOUS_STEPS" };
 
-export type { IStep, IState, ActionType, IUseGetSteps };
+export type { IStep, IState, ActionType, IUseGetSteps, IAction };

@@ -1,4 +1,4 @@
-import { ActionType, IState, IStep } from "@/types/hooks";
+import { ActionType, IAction, IState, IStep } from "@/types/hooks";
 import { useReducer } from "react";
 import EmojiPeopleIcon from "@mui/icons-material/EmojiPeople";
 import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
@@ -14,19 +14,22 @@ import LockPersonIcon from "@mui/icons-material/LockPerson";
 import MilitaryTechIcon from "@mui/icons-material/MilitaryTech";
 import PlayLessonIcon from "@mui/icons-material/PlayLesson";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
+import useValidate from "./useValidate";
+import { INilve } from "@/types/ui";
 
-const initialState = {
+const initialState: IState = {
   idNumber: "",
   fullName: {
     firstName: "",
     lastName: "",
   },
   requestFor: "",
-  industryWorker: -1,
+  industryWorker: "",
   entryReason: "",
   escortDetails: {
     misparIshi: "",
-    name: "",
+    firstName: "",
+    lastName: "",
     phone: "",
   },
   classificationLevel: "",
@@ -45,30 +48,43 @@ const initialState = {
   currentStep: 0,
   modalOpen: false,
 };
+
 const SET_FIELD_VALUE = "SET_FIELD_VALUE";
 const NEXT_STEP = "NEXT_STEP";
 const PREVIOUS_STEP = "PREVIOUS_STEP";
 const OPEN_MODAL = "OPEN_MODAL";
+
 export default function useGetSteps() {
-  function formReducer(state: any, action: any) {
+  const {
+    checkId,
+    checkOption,
+    checkFullName,
+    checkSiba,
+    checkMelave,
+    checkEzor,
+  } = useValidate();
+
+  function formReducer(state: IState, action: IAction): IState {
     switch (action.type) {
       case SET_FIELD_VALUE:
-        const { fieldPath, value } = action.payload;
-        const keys = fieldPath.split(".");
-        if (keys.length > 1) {
-          const [parentKey, childKey] = keys;
-          return {
-            ...state,
-            [parentKey]: {
-              ...state[parentKey],
-              [childKey]: value,
-            },
-          };
-        } else {
-          return {
-            ...state,
-            [fieldPath]: value,
-          };
+        if (action.payload) {
+          const { fieldPath, value } = action.payload;
+          const keys = fieldPath.split(".");
+          if (keys.length > 1) {
+            const [parentKey, childKey] = keys;
+            return {
+              ...state,
+              [parentKey]: {
+                ...state[parentKey],
+                [childKey]: value,
+              },
+            };
+          } else {
+            return {
+              ...state,
+              [fieldPath]: value,
+            };
+          }
         }
       case NEXT_STEP:
         return {
@@ -90,7 +106,80 @@ export default function useGetSteps() {
     }
   }
 
-  const setFieldValue = (fieldPath: string, value: string | Date | any[]) => {
+  const nextStep = () => {
+    if (!isValid()) return;
+    dispatch({ type: NEXT_STEP });
+    if (isCurrentStep(0) && !isTaasia()) {
+      setFieldValue("industryWorker", "");
+      dispatch({ type: NEXT_STEP });
+    } else if (isCurrentStep(9) && !isOto()) {
+      setFieldValue("vehicleDetails", "");
+      dispatch({ type: NEXT_STEP });
+      dispatch({ type: NEXT_STEP });
+    } else if (isCurrentStep(4) && isHayal()) {
+      setFieldValue("escortDetails", "");
+      dispatch({ type: NEXT_STEP });
+    }
+  };
+
+  const previousStep = () => {
+    dispatch({ type: PREVIOUS_STEP });
+
+    if (isCurrentStep(6) && isHayal()) {
+      dispatch({ type: PREVIOUS_STEP });
+    }
+    if (isCurrentStep(2)) {
+      if (!isTaasia()) {
+        dispatch({ type: PREVIOUS_STEP });
+      }
+    }
+    if (isCurrentStep(12)) {
+      if (!isOto()) {
+        dispatch({ type: PREVIOUS_STEP });
+        dispatch({ type: PREVIOUS_STEP });
+      }
+    }
+  };
+
+  const isValid = (inComponent?: boolean) => {
+    const currentStep = steps[state.currentStep];
+    let isValid = true;
+    if (currentStep.validateFn) {
+      const currentValue = getFieldValue(currentStep.fieldName);
+      if (isHayal() && state.currentStep == 2) {
+        isValid = currentStep.validateFn(currentValue, "הזן מספר אישי");
+      } else isValid = currentStep.validateFn(currentValue);
+
+      if (!isValid) {
+        if (!inComponent) {
+          alert("Validation failed");
+        }
+        return false;
+      }
+    }
+    return true;
+  };
+  const isCurrentStep = (step: number) => {
+    return state.currentStep == step;
+  };
+  const isTaasia = () => {
+    return getFieldValue("requestFor") == "עובד תעשייה";
+  };
+
+  const isOto = () => {
+    return getFieldValue("vehicleEntryApproval") == "כן";
+  };
+
+  const isHayal = () => {
+    return (
+      steps[0].options.findIndex((opt) => opt.optionname === state.requestFor) <
+      3
+    );
+  };
+  const setFieldValue = (
+    fieldPath: string,
+    value: string | Date | INilve[]
+  ) => {
     dispatch({ type: SET_FIELD_VALUE, payload: { fieldPath, value } });
   };
   const getFieldValue = (field: string) => {
@@ -101,60 +190,14 @@ export default function useGetSteps() {
     dispatch({ type: OPEN_MODAL });
   };
 
-  const nextStep = () => {
-    dispatch({ type: NEXT_STEP });
-    if (isCurrentStep(0)) {
-      if (!isTaasia()) {
-        dispatch({ type: NEXT_STEP });
-      }
-    }
-    if (isCurrentStep(9)) {
-      if (!isOto()) {
-        dispatch({ type: NEXT_STEP });
-        dispatch({ type: NEXT_STEP });
-      }
-    }
-    if (isCurrentStep(4)) {
-      if (isHayal()) {
-        dispatch({ type: NEXT_STEP });
-      }
-    }
-  };
-  const isCurrentStep = (step: number) => {
-    return state["currentStep"] == step;
-  };
-  const isTaasia = () => {
-    return getFieldValue("requestFor") == 6;
-  };
-
-  const isOto = () => {
-    return getFieldValue("vehicleEntryApproval") == 0;
-  };
-
-  const isHayal = () => {
-    return state["requestFor"] < 3;
-  };
-
-  const previousStep = () => {
-    dispatch({ type: PREVIOUS_STEP });
-    if (isCurrentStep(2)) {
-      if (!isTaasia()) {
-        dispatch({ type: PREVIOUS_STEP });
-      }
-    }
-    if (isCurrentStep(10)) {
-      if (!isOto()) {
-        dispatch({ type: PREVIOUS_STEP });
-        dispatch({ type: PREVIOUS_STEP });
-      }
-    }
-  };
   const [state, dispatch] = useReducer(formReducer, initialState);
 
   const steps = [
     {
       name: "בקשה עבור",
       fieldName: "requestFor",
+      label: "בקשה עבור",
+      validateFn: checkOption,
       options: [
         {
           optionname: "חייל סדיר",
@@ -188,6 +231,8 @@ export default function useGetSteps() {
     },
     {
       name: "עובד תעשייה",
+      label: "עובד תעשייה",
+      validateFn: checkOption,
       options: [
         {
           optionname: "רפאל",
@@ -206,26 +251,37 @@ export default function useGetSteps() {
     },
     {
       name: "הזן תעודת זהות",
+      label: "תעודת זהות",
       fieldName: "idNumber",
+      isTz: true,
       onlyNum: true,
+      validateFn: checkId,
     },
     {
       name: "הזן שם מלא",
+      label: "שם מלא",
       twoFields: true,
       fieldName: "fullName",
+      validateFn: checkFullName,
     },
     {
       name: "הזן סיבת כניסה",
+      label: "סיבת כניסה",
       isBig: true,
       fieldName: "entryReason",
+      validateFn: checkSiba,
     },
     {
       name: "פרטי מלווה",
+      label: "פרטי מלווה",
       isMelave: true,
       fieldName: "escortDetails",
+      validateFn: checkMelave,
     },
     {
       name: "רמת סיווג הפגישה/עבודה",
+      label: "רמת סיווג הפגישה/עבודה",
+      validateFn: checkOption,
       options: [
         {
           optionname: "בלמס",
@@ -252,15 +308,20 @@ export default function useGetSteps() {
     },
     {
       name: "הזן תקופת האישור",
+      label: "תקופת אישור",
       isDate: true,
       fieldName: "approvalPeriod",
     },
     {
       name: "איזור עבודה",
+      label: "איזור עבודה",
       fieldName: "workArea",
+      validateFn: checkEzor,
     },
     {
       name: "אישור כניסה עם רכב?",
+      label: "אישור כניסה ברכ",
+      validateFn: checkOption,
       options: [
         {
           optionname: "כן",
@@ -275,11 +336,13 @@ export default function useGetSteps() {
     },
     {
       name: "הזן פרטי רכב",
+      label: "פרטי רכב",
       fieldName: "vehicleDetails",
       isRehev: true,
     },
     {
       name: "במידה ויש נלווים, נא הוסף אותם",
+      label: "נלווים",
       fieldName: "nilvim",
       isNilvim: true,
     },
@@ -298,5 +361,6 @@ export default function useGetSteps() {
     previousStep,
     steps,
     openCloseModal,
+    isValid,
   };
 }

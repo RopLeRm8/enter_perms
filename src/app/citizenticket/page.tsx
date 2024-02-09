@@ -29,6 +29,7 @@ export default function ClientTicket() {
     previousStep,
     steps,
     openCloseModal,
+    isValid,
   } = useGetSteps();
   const { today, maxDate, setToday } = useHandleDates();
   const currentStep = steps[state.currentStep];
@@ -36,6 +37,7 @@ export default function ClientTicket() {
   const handleInputChange = (fieldPath: string, value: string) => {
     setFieldValue(fieldPath, value);
   };
+
   const theme = useTheme();
 
   useEffect(() => {
@@ -51,7 +53,7 @@ export default function ClientTicket() {
   }, [nextStep]);
   return (
     <>
-      <AddModal open={state["modalOpen"]} />
+      <AddModal open={state.modalOpen} />
       <Box
         sx={{
           display: "flex",
@@ -129,7 +131,9 @@ export default function ClientTicket() {
             fontWeight: 600,
           }}
         >
-          {state["requestFor"] < 3 && state["currentStep"] == 2
+          {steps[0].options.findIndex(
+            (opt) => opt.optionname === state.requestFor
+          ) < 3 && state.currentStep == 2
             ? "הזן מספר אישי"
             : currentStep.name}
         </Typography>
@@ -319,8 +323,17 @@ export default function ClientTicket() {
                         fontSize: "110%",
                       },
                     }}
-                    inputProps={{
-                      maxLength: 10,
+                    type="number"
+                    InputProps={{
+                      inputProps: {
+                        sx: {
+                          "&::-webkit-inner-spin-button, &::-webkit-outer-spin-button":
+                            {
+                              "-webkit-appearance": "none",
+                              margin: 0,
+                            },
+                        },
+                      },
                     }}
                     dir="rtl"
                     value={state[currentStep.fieldName].misparIshi}
@@ -333,7 +346,7 @@ export default function ClientTicket() {
                   />
                   <TextField
                     variant="standard"
-                    placeholder="שם מלא"
+                    placeholder="שם פרטי"
                     sx={{
                       mt: 2,
                       "& .MuiInputBase-input": {
@@ -351,14 +364,17 @@ export default function ClientTicket() {
                       maxLength: 10,
                     }}
                     dir="rtl"
-                    value={state[currentStep.fieldName].name}
+                    value={state[currentStep.fieldName].firstName}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      handleInputChange("escortDetails.name", e.target.value)
+                      handleInputChange(
+                        "escortDetails.firstName",
+                        e.target.value
+                      )
                     }
                   />
                   <TextField
                     variant="standard"
-                    placeholder="טלפון"
+                    placeholder="שם משפחה"
                     sx={{
                       mt: 2,
                       "& .MuiInputBase-input": {
@@ -376,13 +392,52 @@ export default function ClientTicket() {
                       maxLength: 10,
                     }}
                     dir="rtl"
+                    value={state[currentStep.fieldName].lastName}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      handleInputChange(
+                        "escortDetails.lastName",
+                        e.target.value
+                      )
+                    }
+                  />
+                  <TextField
+                    variant="standard"
+                    placeholder="טלפון (לדוגמא 0536022017)"
+                    sx={{
+                      mt: 2,
+                      "& .MuiInputBase-input": {
+                        color: theme.palette.primary.main,
+                        fontFamily: "Assistant",
+                        fontSize: "130%",
+                      },
+                      "& .MuiInputBase-input::placeholder": {
+                        color: "gray",
+                        fontFamily: "Assistant",
+                        fontSize: "110%",
+                      },
+                    }}
+                    InputProps={{
+                      inputProps: {
+                        sx: {
+                          "&::-webkit-inner-spin-button, &::-webkit-outer-spin-button":
+                            {
+                              "-webkit-appearance": "none",
+                              margin: 0,
+                            },
+                        },
+                      },
+                    }}
+                    dir="rtl"
+                    type="number"
                     value={state[currentStep.fieldName].phone}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       handleInputChange("escortDetails.phone", e.target.value)
                     }
                   />
                 </>
-              ) : !currentStep.isDate && !currentStep.isNilvim ? (
+              ) : !currentStep.isDate &&
+                !currentStep.isNilvim &&
+                !currentStep.isSikum ? (
                 <TextField
                   variant="standard"
                   sx={{
@@ -398,9 +453,18 @@ export default function ClientTicket() {
                       fontSize: "110%",
                     },
                   }}
-                  inputProps={{
-                    maxLength: 10,
+                  InputProps={{
+                    inputProps: {
+                      sx: {
+                        "&::-webkit-inner-spin-button, &::-webkit-outer-spin-button":
+                          {
+                            "-webkit-appearance": "none",
+                            margin: 0,
+                          },
+                      },
+                    },
                   }}
+                  type={currentStep.isTz ? "number" : "text"}
                   dir="rtl"
                   value={state[currentStep.fieldName]}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -506,10 +570,7 @@ export default function ClientTicket() {
                       padding: "0 4px",
                     },
                   }}
-                  invisible={
-                    currentStep.options.indexOf(opt) !=
-                    state[currentStep.fieldName]
-                  }
+                  invisible={state[currentStep.fieldName] !== opt.optionname}
                 >
                   <Button
                     variant="outlined"
@@ -522,10 +583,7 @@ export default function ClientTicket() {
                       maxHeight: "20vh",
                     }}
                     onClick={() => {
-                      handleInputChange(
-                        currentStep.fieldName,
-                        currentStep.options.indexOf(opt).toString()
-                      );
+                      handleInputChange(currentStep.fieldName, opt.optionname);
                     }}
                   >
                     <Box
@@ -582,6 +640,7 @@ export default function ClientTicket() {
             px: 10,
           }}
           onClick={nextStep}
+          disabled={!isValid(true)}
           variant="contained"
         >
           {steps.indexOf(currentStep) === steps.length - 1 ? "הגש" : "המשך"}
