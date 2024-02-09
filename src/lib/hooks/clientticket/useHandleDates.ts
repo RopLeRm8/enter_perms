@@ -1,9 +1,17 @@
-export default function useHandleDates() {
-  const today = new Date();
-  const todayFormat = today.toISOString().split("T")[0];
-  const maxDate = new Date(today);
-  maxDate.setMonth(maxDate.getMonth() + 2);
-  const maxDateFormat = maxDate.toISOString().split("T")[0];
+import { useState, useEffect } from "react";
 
-  return { todayFormat, maxDateFormat };
+export default function useHandleDates() {
+  const [today, setToday] = useState<string>(
+    new Date().toISOString().split("T")[0]
+  );
+  const [maxDate, setMaxDate] = useState<string>("");
+
+  useEffect(() => {
+    const todayDate = new Date(today);
+    const maxDateValue = new Date(todayDate);
+    maxDateValue.setMonth(maxDateValue.getMonth() + 2);
+    setMaxDate(maxDateValue.toISOString().split("T")[0]);
+  }, [today]);
+
+  return { today, maxDate, setToday };
 }

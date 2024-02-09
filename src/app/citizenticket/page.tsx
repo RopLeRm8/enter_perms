@@ -16,26 +16,42 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import { useEffect } from "react";
+import AddModal from "./addmodal";
+import { INilve } from "@/types/ui";
 
 export default function ClientTicket() {
-  const { state, setFieldValue, nextStep, previousStep, steps } = useGetSteps();
-  const { todayFormat, maxDateFormat } = useHandleDates();
+  const {
+    state,
+    setFieldValue,
+    getFieldValue,
+    nextStep,
+    previousStep,
+    steps,
+    openCloseModal,
+  } = useGetSteps();
+  const { today, maxDate, setToday } = useHandleDates();
   const currentStep = steps[state.currentStep];
 
-  const handleInputChange = (field: string, value: string) => {
-    const [parentKey, childKey] = field.split(".");
-    if (childKey) {
-      setFieldValue(parentKey, {
-        ...state[parentKey],
-        [childKey]: value,
-      });
-    } else {
-      setFieldValue(field, value);
-    }
+  const handleInputChange = (fieldPath: string, value: string) => {
+    setFieldValue(fieldPath, value);
   };
   const theme = useTheme();
+
+  useEffect(() => {
+    const handleNextStep = (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        nextStep();
+      }
+    };
+    window.addEventListener("keydown", handleNextStep);
+    return () => {
+      window.removeEventListener("keydown", handleNextStep);
+    };
+  }, [nextStep]);
   return (
     <>
+      <AddModal open={state["modalOpen"]} />
       <Box
         sx={{
           display: "flex",
@@ -72,6 +88,7 @@ export default function ClientTicket() {
                   position: "absolute",
                   right: 60,
                   fontFamily: "Assistant",
+                  fontWeight: 600,
                   "&:hover": {
                     color: theme.palette.secondary.main,
                   },
@@ -87,9 +104,13 @@ export default function ClientTicket() {
       </Box>
       <Box sx={{ display: "flex", justifyContent: "center" }}>
         <Typography
-          sx={{ fontSize: "150%", color: theme.palette.primary.main }}
+          sx={{
+            fontSize: "150%",
+            color: theme.palette.primary.main,
+            fontWeight: 600,
+          }}
         >
-          בקשה לאישור כניסה - אזרח
+          בקשה לאישור כניסה
         </Typography>
       </Box>
       <Box
@@ -105,9 +126,12 @@ export default function ClientTicket() {
             fontSize: "230%",
             color: theme.palette.primary.main,
             direction: "rtl",
+            fontWeight: 600,
           }}
         >
-          {currentStep.name}
+          {state["requestFor"] < 3 && state["currentStep"] == 2
+            ? "הזן מספר אישי"
+            : currentStep.name}
         </Typography>
         {!currentStep.options ? (
           <>
@@ -358,7 +382,7 @@ export default function ClientTicket() {
                     }
                   />
                 </>
-              ) : !currentStep.isDate ? (
+              ) : !currentStep.isDate && !currentStep.isNilvim ? (
                 <TextField
                   variant="standard"
                   sx={{
@@ -391,35 +415,63 @@ export default function ClientTicket() {
           <Box
             sx={{
               display: "flex",
-              mt: 2,
-              flexDirection: "row-reverse",
+              flexDirection: "column",
               alignItems: "center",
             }}
           >
-            <Typography>-מ</Typography>
-            <TextField
-              type="date"
-              value={state[currentStep.fieldName].startDate}
-              defaultValue={todayFormat}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                handleInputChange("approvalPeriod.startDate", e.target.value)
-              }
-              sx={{ mx: 1 }}
-            />
-            <Typography>-עד ל</Typography>
-            <TextField
-              type="date"
-              value={state[currentStep.fieldName].endDate}
-              defaultValue={maxDateFormat}
-              inputProps={{
-                min: todayFormat,
-                max: maxDateFormat,
+            <Box
+              sx={{
+                display: "flex",
+                mt: 2,
+                flexDirection: "row-reverse",
+                alignItems: "center",
               }}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                handleInputChange("approvalPeriod.endDate", e.target.value)
-              }
-              sx={{ mx: 1 }}
-            />
+            >
+              <Typography>-מ</Typography>
+              <TextField
+                type="date"
+                value={state[currentStep.fieldName].startDate}
+                defaultValue={today}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setToday(e.target.value);
+                  handleInputChange("approvalPeriod.startDate", e.target.value);
+                  handleInputChange("approvalPeriod.endDate", e.target.value);
+                }}
+                sx={{ mx: 1 }}
+              />
+              <Typography>-עד ל</Typography>
+              <TextField
+                type="date"
+                value={state[currentStep.fieldName].endDate}
+                defaultValue={today}
+                inputProps={{
+                  min: today,
+                  max: maxDate,
+                }}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  handleInputChange("approvalPeriod.endDate", e.target.value);
+                }}
+                sx={{ mx: 1 }}
+              />
+            </Box>
+            <Typography
+              sx={{
+                direction: "rtl",
+                mt: 2,
+                color: theme.palette.primary.main,
+                fontSize: "120%",
+              }}
+            >
+              אישור ל-
+              {Math.round(
+                (new Date(getFieldValue("approvalPeriod").endDate).getTime() -
+                  new Date(
+                    getFieldValue("approvalPeriod").startDate
+                  ).getTime()) /
+                  (1000 * 60 * 60 * 24)
+              ) + 1 || 1}{" "}
+              ימים
+            </Typography>
           </Box>
         ) : null}
         {currentStep.options ? (
@@ -464,10 +516,10 @@ export default function ClientTicket() {
                     sx={{
                       px: 8,
                       minWidth: "20%",
-                      width: "8vw",
+                      width: "10vw",
                       borderRadius: "100px",
-                      height: "16vh",
-                      maxHeight: "16vh",
+                      height: "20vh",
+                      maxHeight: "20vh",
                     }}
                     onClick={() => {
                       handleInputChange(
@@ -498,6 +550,28 @@ export default function ClientTicket() {
               </Grid>
             ))}
           </Grid>
+        ) : null}
+        {currentStep.isNilvim ? (
+          <>
+            {state[currentStep.fieldName].map(
+              (nilve: INilve, index: number) => (
+                <Typography key={index}>Nilve</Typography>
+              )
+            )}
+            <Button
+              sx={{
+                fontFamily: "Assistant",
+                fontSize: "150%",
+                background: theme.palette.primary.main,
+                px: 2,
+                my: 2,
+              }}
+              onClick={openCloseModal}
+              variant="contained"
+            >
+              הוספת נלווים
+            </Button>
+          </>
         ) : null}
         <Button
           sx={{

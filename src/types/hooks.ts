@@ -1,3 +1,5 @@
+import { INilve } from "./ui";
+
 interface IOptions {
   optionname: string;
   icon?: JSX.Element;
@@ -13,6 +15,8 @@ interface IStep {
   twoFields?: boolean;
   isMelave?: boolean;
   onlyNum?: boolean;
+  isNilvim?: boolean;
+  isSikum?: boolean;
 }
 
 interface IState {
@@ -41,10 +45,19 @@ interface IState {
     vehicleCol: string;
     vehicleType: string;
   };
-  nilvim: string[];
+  nilvim: INilve[];
   currentStep: number;
 }
 
+interface IUseGetSteps {
+  state: IState;
+  setFieldValue: (fieldPath: string, value: string | Date | any[]) => void;
+  getFieldValue: (field: string) => any;
+  nextStep: () => void;
+  previousStep: () => void;
+  steps: IStep[];
+  openCloseModal: () => void;
+}
 type ActionType =
   | { type: "SET_FIELD_VALUE"; payload: { field: string; value: string } }
   | { type: "NEXT_STEP" }
@@ -52,4 +65,4 @@ type ActionType =
   | { type: "PREVIOUS_STEP" }
   | { type: "TWO_PREVIOUS_STEPS" };
 
-export type { IStep, IState, ActionType };
+export type { IStep, IState, ActionType, IUseGetSteps };
