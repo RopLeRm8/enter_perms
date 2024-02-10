@@ -577,10 +577,10 @@ export default function ClientTicket() {
                     sx={{
                       px: 8,
                       minWidth: "20%",
-                      width: "10vw",
+                      width: "12rem",
                       borderRadius: "100px",
-                      height: "20vh",
-                      maxHeight: "20vh",
+                      height: "15vh",
+                      maxHeight: "15vh",
                     }}
                     onClick={() => {
                       handleInputChange(currentStep.fieldName, opt.optionname);

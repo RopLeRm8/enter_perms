@@ -4,7 +4,7 @@ import { createTheme } from "@mui/material";
 
 export const theme = createTheme({
   direction: "rtl",
-  typography: { fontFamily: "Assistant" },
+  typography: { fontFamily: "David" },
   palette: {
     primary: {
       main: "#005bbb",
