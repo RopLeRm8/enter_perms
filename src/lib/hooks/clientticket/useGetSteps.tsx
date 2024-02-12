@@ -1,5 +1,5 @@
-import { ActionType, IAction, IState, IStep } from "@/types/hooks";
-import { useReducer } from "react";
+import { IAction, IState, IStep } from "@/types/hooks";
+import { useContext, useReducer } from "react";
 import EmojiPeopleIcon from "@mui/icons-material/EmojiPeople";
 import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
@@ -16,6 +16,7 @@ import PlayLessonIcon from "@mui/icons-material/PlayLesson";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import useValidate from "./useValidate";
 import { INilve } from "@/types/ui";
+import { NotificationContext } from "@/contexts/NotificationContext";
 
 const initialState: IState = {
   idNumber: "",
@@ -55,6 +56,9 @@ const PREVIOUS_STEP = "PREVIOUS_STEP";
 const OPEN_MODAL = "OPEN_MODAL";
 
 export default function useGetSteps() {
+  const notifContext = useContext(NotificationContext);
+  const setNotif = notifContext.setMessage;
+  const setIsError = notifContext.setIsError;
   const {
     checkId,
     checkOption,
@@ -62,6 +66,7 @@ export default function useGetSteps() {
     checkSiba,
     checkMelave,
     checkEzor,
+    checkRehev,
   } = useValidate();
 
   function formReducer(state: IState, action: IAction): IState {
@@ -152,29 +157,28 @@ export default function useGetSteps() {
 
       if (!isValid) {
         if (!inComponent) {
-          alert("Validation failed");
+          setNotif("נא הקלד מידע תקין");
+          setIsError(true);
         }
         return false;
       }
     }
     return true;
   };
-  const isCurrentStep = (step: number) => {
+  const isCurrentStep = (step: number): boolean => {
     return state.currentStep == step;
   };
-  const isTaasia = () => {
+  const isTaasia = (): boolean => {
     return getFieldValue("requestFor") == "עובד תעשייה";
   };
 
-  const isOto = () => {
+  const isOto = (): boolean => {
     return getFieldValue("vehicleEntryApproval") == "כן";
   };
 
-  const isHayal = () => {
-    return (
-      steps[0].options.findIndex((opt) => opt.optionname === state.requestFor) <
-      3
-    );
+  const isHayal = (value?: string): boolean => {
+    const val = value ?? state.requestFor;
+    return steps[0].options.findIndex((opt) => opt.optionname === val) < 3;
   };
   const setFieldValue = (
     fieldPath: string,
@@ -184,10 +188,6 @@ export default function useGetSteps() {
   };
   const getFieldValue = (field: string) => {
     return state[field];
-  };
-
-  const openCloseModal = () => {
-    dispatch({ type: OPEN_MODAL });
   };
 
   const [state, dispatch] = useReducer(formReducer, initialState);
@@ -339,6 +339,7 @@ export default function useGetSteps() {
       label: "פרטי רכב",
       fieldName: "vehicleDetails",
       isRehev: true,
+      validateFn: checkRehev,
     },
     {
       name: "במידה ויש נלווים, נא הוסף אותם",
@@ -360,7 +361,7 @@ export default function useGetSteps() {
     nextStep,
     previousStep,
     steps,
-    openCloseModal,
     isValid,
+    isHayal,
   };
 }

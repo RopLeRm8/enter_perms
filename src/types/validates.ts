@@ -10,5 +10,9 @@ interface IMelave {
   lastName: string;
   phone: string;
 }
-
-export type { input, IFullName, IMelave };
+interface IRehev {
+  vehicleNum: string;
+  vehicleCol: string;
+  vehicleType: string;
+}
+export type { input, IFullName, IMelave, IRehev };

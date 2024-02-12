@@ -1,4 +1,4 @@
-import { IFullName, IMelave, input } from "@/types/validates";
+import { IFullName, IMelave, IRehev, input } from "@/types/validates";
 
 export default function useValidate() {
   const checkId = (input: input, title?: string) => {
@@ -14,9 +14,9 @@ export default function useValidate() {
   const checkFullName = (fullname: IFullName) => {
     return (
       fullname.firstName.length > 0 &&
-      fullname.firstName.length < 10 &&
+      fullname.firstName.length < 11 &&
       fullname.lastName.length > 0 &&
-      fullname.lastName.length < 10
+      fullname.lastName.length < 11
     );
   };
   const checkSiba = (input: input) => {
@@ -35,6 +35,14 @@ export default function useValidate() {
     );
   };
   const checkEzor = checkSiba;
+  const checkRehev = (rehev: IRehev) => {
+    return (
+      rehev.vehicleNum.length > 4 &&
+      rehev.vehicleNum.length < 9 &&
+      rehev.vehicleCol.length > 2 &&
+      rehev.vehicleType.length > 0
+    );
+  };
   return {
     checkId,
     checkOption,
@@ -42,5 +50,6 @@ export default function useValidate() {
     checkSiba,
     checkMelave,
     checkEzor,
+    checkRehev,
   };
 }

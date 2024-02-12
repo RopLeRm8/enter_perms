@@ -1,3 +1,4 @@
+import { NotificationProvider } from "@/providers/NotificationProvider";
 import { theme } from "@/providers/ThemeProvider";
 import { ThemeProvider } from "@mui/material";
 
@@ -13,8 +14,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/cyber.png" />
+      </head>
       <body style={{ margin: 0 }}>
-        <ThemeProvider theme={theme}>{children}</ThemeProvider>
+        <ThemeProvider theme={theme}>
+          <NotificationProvider>{children}</NotificationProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

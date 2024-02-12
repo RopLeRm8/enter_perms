@@ -6,8 +6,6 @@ Project Description
 
 ### Todo
 
-- [ ] Finish with validations  
-- [ ] Max today date = 1 year from now  
 - [ ] Sikum ba sof  
 
 ### In Progress
@@ -15,6 +13,8 @@ Project Description
 
 ### Done ✓
 
+- [x] Finish with validations  
+- [x] Max today date = 1 year from now  
 - [x] If no car = no nilvim  
 - [x] Add amount of days (from start to end)  
 

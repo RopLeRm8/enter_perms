@@ -16,7 +16,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import AddModal from "./addmodal";
 import { INilve } from "@/types/ui";
 
@@ -28,14 +28,24 @@ export default function ClientTicket() {
     nextStep,
     previousStep,
     steps,
-    openCloseModal,
     isValid,
+    isHayal,
   } = useGetSteps();
-  const { today, maxDate, setToday } = useHandleDates();
+  const [open, setOpen] = useState<boolean>(false);
+  const { today, maxDate, setToday, maxTodayDate, todayInit } =
+    useHandleDates();
   const currentStep = steps[state.currentStep];
 
-  const handleInputChange = (fieldPath: string, value: string) => {
-    setFieldValue(fieldPath, value);
+  const handleInputChange = (
+    fieldPath: string,
+    value: string,
+    onlynums?: boolean
+  ) => {
+    if (!onlynums) {
+      setFieldValue(fieldPath, value);
+    } else if (onlynums && /^\d*$/.test(value)) {
+      return setFieldValue(fieldPath, value);
+    }
   };
 
   const theme = useTheme();
@@ -46,14 +56,19 @@ export default function ClientTicket() {
         nextStep();
       }
     };
+    if (open) {
+      window.removeEventListener("keydown", handleNextStep);
+      return;
+    }
     window.addEventListener("keydown", handleNextStep);
+
     return () => {
       window.removeEventListener("keydown", handleNextStep);
     };
-  }, [nextStep]);
+  }, [nextStep, open]);
   return (
     <>
-      <AddModal open={state.modalOpen} />
+      <AddModal open={open} setOpen={setOpen} />
       <Box
         sx={{
           display: "flex",
@@ -89,7 +104,7 @@ export default function ClientTicket() {
                   color: "white",
                   position: "absolute",
                   right: 60,
-                  fontFamily: "Assistant",
+                  fontFamily: "David",
                   fontWeight: 600,
                   "&:hover": {
                     color: theme.palette.secondary.main,
@@ -131,9 +146,7 @@ export default function ClientTicket() {
             fontWeight: 600,
           }}
         >
-          {steps[0].options.findIndex(
-            (opt) => opt.optionname === state.requestFor
-          ) < 3 && state.currentStep == 2
+          {isHayal() && state.currentStep == 2
             ? "הזן מספר אישי"
             : currentStep.name}
         </Typography>
@@ -142,21 +155,25 @@ export default function ClientTicket() {
             {currentStep.twoFields ? (
               <>
                 <TextField
+                  autoFocus
                   variant="standard"
                   sx={{
                     mt: 2,
                     "& .MuiInputBase-input": {
                       color: theme.palette.primary.main,
-                      fontFamily: "Assistant",
+                      fontFamily: "David",
                       fontSize: "130%",
                     },
                     "& .MuiInputBase-input::placeholder": {
                       color: "gray",
-                      fontFamily: "Assistant",
+                      fontFamily: "David",
                       fontSize: "110%",
                     },
                   }}
                   placeholder="שם פרטי"
+                  inputProps={{
+                    maxLength: 10,
+                  }}
                   dir="rtl"
                   value={state.fullName.firstName}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -169,16 +186,19 @@ export default function ClientTicket() {
                     mt: 2,
                     "& .MuiInputBase-input": {
                       color: theme.palette.primary.main,
-                      fontFamily: "Assistant",
+                      fontFamily: "David",
                       fontSize: "130%",
                     },
                     "& .MuiInputBase-input::placeholder": {
                       color: "gray",
-                      fontFamily: "Assistant",
+                      fontFamily: "David",
                       fontSize: "110%",
                     },
                   }}
                   placeholder="שם משפחה"
+                  inputProps={{
+                    maxLength: 10,
+                  }}
                   dir="rtl"
                   value={state.fullName.lastName}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -189,18 +209,19 @@ export default function ClientTicket() {
             ) : null}
             {currentStep.isBig ? (
               <TextField
+                autoFocus
                 variant="filled"
                 sx={{
                   mt: 2,
                   minWidth: "30%",
                   "& .MuiInputBase-input": {
                     color: theme.palette.primary.main,
-                    fontFamily: "Assistant",
+                    fontFamily: "David",
                     fontSize: "110%",
                   },
                   "& .MuiInputBase-input::placeholder": {
                     color: "gray",
-                    fontFamily: "Assistant",
+                    fontFamily: "David",
                     fontSize: "110%",
                   },
                 }}
@@ -218,28 +239,30 @@ export default function ClientTicket() {
                   <TextField
                     variant="standard"
                     placeholder="מספר רכב"
+                    autoFocus
                     sx={{
                       mt: 2,
                       "& .MuiInputBase-input": {
                         color: theme.palette.primary.main,
-                        fontFamily: "Assistant",
+                        fontFamily: "David",
                         fontSize: "130%",
                       },
                       "& .MuiInputBase-input::placeholder": {
                         color: "gray",
-                        fontFamily: "Assistant",
+                        fontFamily: "David",
                         fontSize: "110%",
                       },
                     }}
                     inputProps={{
-                      maxLength: 10,
+                      maxLength: 8,
                     }}
                     dir="rtl"
                     value={state[currentStep.fieldName].vehicleNum}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       handleInputChange(
                         "vehicleDetails.vehicleNum",
-                        e.target.value
+                        e.target.value,
+                        true
                       )
                     }
                   />
@@ -250,12 +273,12 @@ export default function ClientTicket() {
                       mt: 2,
                       "& .MuiInputBase-input": {
                         color: theme.palette.primary.main,
-                        fontFamily: "Assistant",
+                        fontFamily: "David",
                         fontSize: "130%",
                       },
                       "& .MuiInputBase-input::placeholder": {
                         color: "gray",
-                        fontFamily: "Assistant",
+                        fontFamily: "David",
                         fontSize: "110%",
                       },
                     }}
@@ -275,16 +298,16 @@ export default function ClientTicket() {
                     variant="standard"
                     sx={{
                       mt: 2,
-                      fontFamily: "Assistant",
+                      fontFamily: "David",
                       width: "16rem",
                       "& .MuiInputBase-input": {
                         color: theme.palette.primary.main,
-                        fontFamily: "Assistant",
+                        fontFamily: "David",
                         fontSize: "130%",
                       },
                       "& .MuiInputBase-input::placeholder": {
                         color: "gray",
-                        fontFamily: "Assistant",
+                        fontFamily: "David",
                         fontSize: "110%",
                       },
                     }}
@@ -309,38 +332,31 @@ export default function ClientTicket() {
                 <>
                   <TextField
                     variant="standard"
+                    autoFocus
                     placeholder="מספר אישי"
                     sx={{
                       mt: 2,
                       "& .MuiInputBase-input": {
                         color: theme.palette.primary.main,
-                        fontFamily: "Assistant",
+                        fontFamily: "David",
                         fontSize: "130%",
                       },
                       "& .MuiInputBase-input::placeholder": {
                         color: "gray",
-                        fontFamily: "Assistant",
+                        fontFamily: "David",
                         fontSize: "110%",
                       },
                     }}
-                    type="number"
-                    InputProps={{
-                      inputProps: {
-                        sx: {
-                          "&::-webkit-inner-spin-button, &::-webkit-outer-spin-button":
-                            {
-                              "-webkit-appearance": "none",
-                              margin: 0,
-                            },
-                        },
-                      },
+                    inputProps={{
+                      maxLength: 7,
                     }}
                     dir="rtl"
                     value={state[currentStep.fieldName].misparIshi}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       handleInputChange(
                         "escortDetails.misparIshi",
-                        e.target.value
+                        e.target.value,
+                        true
                       )
                     }
                   />
@@ -351,12 +367,12 @@ export default function ClientTicket() {
                       mt: 2,
                       "& .MuiInputBase-input": {
                         color: theme.palette.primary.main,
-                        fontFamily: "Assistant",
+                        fontFamily: "David",
                         fontSize: "130%",
                       },
                       "& .MuiInputBase-input::placeholder": {
                         color: "gray",
-                        fontFamily: "Assistant",
+                        fontFamily: "David",
                         fontSize: "110%",
                       },
                     }}
@@ -379,12 +395,12 @@ export default function ClientTicket() {
                       mt: 2,
                       "& .MuiInputBase-input": {
                         color: theme.palette.primary.main,
-                        fontFamily: "Assistant",
+                        fontFamily: "David",
                         fontSize: "130%",
                       },
                       "& .MuiInputBase-input::placeholder": {
                         color: "gray",
-                        fontFamily: "Assistant",
+                        fontFamily: "David",
                         fontSize: "110%",
                       },
                     }}
@@ -407,31 +423,26 @@ export default function ClientTicket() {
                       mt: 2,
                       "& .MuiInputBase-input": {
                         color: theme.palette.primary.main,
-                        fontFamily: "Assistant",
+                        fontFamily: "David",
                         fontSize: "130%",
                       },
                       "& .MuiInputBase-input::placeholder": {
                         color: "gray",
-                        fontFamily: "Assistant",
+                        fontFamily: "David",
                         fontSize: "110%",
                       },
                     }}
-                    InputProps={{
-                      inputProps: {
-                        sx: {
-                          "&::-webkit-inner-spin-button, &::-webkit-outer-spin-button":
-                            {
-                              "-webkit-appearance": "none",
-                              margin: 0,
-                            },
-                        },
-                      },
+                    inputProps={{
+                      maxLength: 10,
                     }}
                     dir="rtl"
-                    type="number"
                     value={state[currentStep.fieldName].phone}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      handleInputChange("escortDetails.phone", e.target.value)
+                      handleInputChange(
+                        "escortDetails.phone",
+                        e.target.value,
+                        true
+                      )
                     }
                   />
                 </>
@@ -444,31 +455,28 @@ export default function ClientTicket() {
                     mt: 2,
                     "& .MuiInputBase-input": {
                       color: theme.palette.primary.main,
-                      fontFamily: "Assistant",
+                      fontFamily: "David",
                       fontSize: "130%",
                     },
                     "& .MuiInputBase-input::placeholder": {
                       color: "gray",
-                      fontFamily: "Assistant",
+                      fontFamily: "David",
                       fontSize: "110%",
                     },
                   }}
-                  InputProps={{
-                    inputProps: {
-                      sx: {
-                        "&::-webkit-inner-spin-button, &::-webkit-outer-spin-button":
-                          {
-                            "-webkit-appearance": "none",
-                            margin: 0,
-                          },
-                      },
-                    },
+                  type="text"
+                  autoFocus
+                  inputProps={{
+                    maxLength: currentStep.isTz ? (isHayal() ? 8 : 9) : 50,
                   }}
-                  type={currentStep.isTz ? "number" : "text"}
                   dir="rtl"
                   value={state[currentStep.fieldName]}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    handleInputChange(currentStep.fieldName, e.target.value)
+                    handleInputChange(
+                      currentStep.fieldName,
+                      e.target.value,
+                      currentStep.isTz
+                    )
                   }
                 />
               ) : null
@@ -496,6 +504,10 @@ export default function ClientTicket() {
                 type="date"
                 value={state[currentStep.fieldName].startDate}
                 defaultValue={today}
+                inputProps={{
+                  min: todayInit,
+                  max: maxTodayDate,
+                }}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setToday(e.target.value);
                   handleInputChange("approvalPeriod.startDate", e.target.value);
@@ -513,6 +525,7 @@ export default function ClientTicket() {
                   max: maxDate,
                 }}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  handleInputChange("approvalPeriod.startDate", today);
                   handleInputChange("approvalPeriod.endDate", e.target.value);
                 }}
                 sx={{ mx: 1 }}
@@ -579,8 +592,8 @@ export default function ClientTicket() {
                       minWidth: "20%",
                       width: "12rem",
                       borderRadius: "100px",
-                      height: "15vh",
-                      maxHeight: "15vh",
+                      height: "22vh",
+                      maxHeight: "22vh",
                     }}
                     onClick={() => {
                       handleInputChange(currentStep.fieldName, opt.optionname);
@@ -618,13 +631,15 @@ export default function ClientTicket() {
             )}
             <Button
               sx={{
-                fontFamily: "Assistant",
+                fontFamily: "David",
                 fontSize: "150%",
                 background: theme.palette.primary.main,
                 px: 2,
                 my: 2,
               }}
-              onClick={openCloseModal}
+              onClick={() => {
+                setOpen(true);
+              }}
               variant="contained"
             >
               הוספת נלווים
@@ -633,7 +648,7 @@ export default function ClientTicket() {
         ) : null}
         <Button
           sx={{
-            fontFamily: "Assistant",
+            fontFamily: "David",
             fontSize: "150%",
             background: theme.palette.secondary.main,
             mt: 3,

@@ -5,7 +5,12 @@ export default function useHandleDates() {
     new Date().toISOString().split("T")[0]
   );
   const [maxDate, setMaxDate] = useState<string>("");
-
+  const todayInit = new Date().toISOString().split("T")[0];
+  const maxTodayDate = new Date(
+    new Date().setFullYear(new Date().getFullYear() + 1)
+  )
+    .toISOString()
+    .split("T")[0];
   useEffect(() => {
     const todayDate = new Date(today);
     const maxDateValue = new Date(todayDate);
@@ -13,5 +18,5 @@ export default function useHandleDates() {
     setMaxDate(maxDateValue.toISOString().split("T")[0]);
   }, [today]);
 
-  return { today, maxDate, setToday };
+  return { today, todayInit, maxDate, setToday, maxTodayDate };
 }
