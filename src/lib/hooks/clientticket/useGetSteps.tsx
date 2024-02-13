@@ -1,5 +1,5 @@
-import { IAction, IState, IStep } from "@/types/hooks";
-import { useContext, useReducer } from "react";
+import { IStep } from "@/types/hooks";
+import { useContext } from "react";
 import EmojiPeopleIcon from "@mui/icons-material/EmojiPeople";
 import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
@@ -17,45 +17,10 @@ import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import useValidate from "./useValidate";
 import { INilve } from "@/types/ui";
 import { NotificationContext } from "@/contexts/NotificationContext";
-
-const initialState: IState = {
-  idNumber: "",
-  fullName: {
-    firstName: "",
-    lastName: "",
-  },
-  requestFor: "",
-  industryWorker: "",
-  entryReason: "",
-  escortDetails: {
-    misparIshi: "",
-    firstName: "",
-    lastName: "",
-    phone: "",
-  },
-  classificationLevel: "",
-  approvalPeriod: {
-    startDate: undefined,
-    endDate: undefined,
-  },
-  workArea: "",
-  vehicleEntryApproval: "",
-  vehicleDetails: {
-    vehicleNum: "",
-    vehicleCol: "",
-    vehicleType: "",
-  },
-  nilvim: [],
-  currentStep: 0,
-  modalOpen: false,
-};
-
-const SET_FIELD_VALUE = "SET_FIELD_VALUE";
-const NEXT_STEP = "NEXT_STEP";
-const PREVIOUS_STEP = "PREVIOUS_STEP";
-const OPEN_MODAL = "OPEN_MODAL";
+import { useStateValue } from "@/providers/StateProvider";
 
 export default function useGetSteps() {
+  const [state, dispatch] = useStateValue();
   const notifContext = useContext(NotificationContext);
   const setNotif = notifContext.setMessage;
   const setIsError = notifContext.setIsError;
@@ -69,79 +34,38 @@ export default function useGetSteps() {
     checkRehev,
   } = useValidate();
 
-  function formReducer(state: IState, action: IAction): IState {
-    switch (action.type) {
-      case SET_FIELD_VALUE:
-        if (action.payload) {
-          const { fieldPath, value } = action.payload;
-          const keys = fieldPath.split(".");
-          if (keys.length > 1) {
-            const [parentKey, childKey] = keys;
-            return {
-              ...state,
-              [parentKey]: {
-                ...state[parentKey],
-                [childKey]: value,
-              },
-            };
-          } else {
-            return {
-              ...state,
-              [fieldPath]: value,
-            };
-          }
-        }
-      case NEXT_STEP:
-        return {
-          ...state,
-          currentStep: state.currentStep + 1,
-        };
-      case PREVIOUS_STEP:
-        return {
-          ...state,
-          currentStep: state.currentStep > 0 ? state.currentStep - 1 : 0,
-        };
-      case OPEN_MODAL:
-        return {
-          ...state,
-          modalOpen: !state.modalOpen,
-        };
-      default:
-        return state;
-    }
-  }
-
   const nextStep = () => {
     if (!isValid()) return;
-    dispatch({ type: NEXT_STEP });
+    dispatch({ type: "NEXT_STEP" });
     if (isCurrentStep(0) && !isTaasia()) {
       setFieldValue("industryWorker", "");
-      dispatch({ type: NEXT_STEP });
+      dispatch({ type: "NEXT_STEP" });
     } else if (isCurrentStep(9) && !isOto()) {
       setFieldValue("vehicleDetails", "");
-      dispatch({ type: NEXT_STEP });
-      dispatch({ type: NEXT_STEP });
+      setFieldValue("nilvim", []);
+      dispatch({ type: "NEXT_STEP" });
+      dispatch({ type: "NEXT_STEP" });
     } else if (isCurrentStep(4) && isHayal()) {
       setFieldValue("escortDetails", "");
-      dispatch({ type: NEXT_STEP });
+      dispatch({ type: "NEXT_STEP" });
     }
   };
 
   const previousStep = () => {
-    dispatch({ type: PREVIOUS_STEP });
+    dispatch({ type: "PREVIOUS_STEP" });
 
     if (isCurrentStep(6) && isHayal()) {
-      dispatch({ type: PREVIOUS_STEP });
+      dispatch({ type: "PREVIOUS_STEP" });
     }
     if (isCurrentStep(2)) {
       if (!isTaasia()) {
-        dispatch({ type: PREVIOUS_STEP });
+        dispatch({ type: "PREVIOUS_STEP" });
       }
     }
     if (isCurrentStep(12)) {
       if (!isOto()) {
-        dispatch({ type: PREVIOUS_STEP });
-        dispatch({ type: PREVIOUS_STEP });
+        dispatch({ type: "PREVIOUS_STEP" });
+        dispatch({ type: "PREVIOUS_STEP" });
       }
     }
   };
@@ -184,13 +108,14 @@ export default function useGetSteps() {
     fieldPath: string,
     value: string | Date | INilve[]
   ) => {
-    dispatch({ type: SET_FIELD_VALUE, payload: { fieldPath, value } });
+    if (fieldPath === "nilvim") {
+      state.nilvim = [];
+    }
+    dispatch({ type: "SET_FIELD_VALUE", payload: { fieldPath, value } });
   };
   const getFieldValue = (field: string) => {
     return state[field];
   };
-
-  const [state, dispatch] = useReducer(formReducer, initialState);
 
   const steps = [
     {

@@ -1,4 +1,6 @@
+import { formReducer, initialState } from "@/lib/hooks/clientticket/useReducer";
 import { NotificationProvider } from "@/providers/NotificationProvider";
+import { StateProvider } from "@/providers/StateProvider";
 import { theme } from "@/providers/ThemeProvider";
 import { ThemeProvider } from "@mui/material";
 
@@ -19,7 +21,9 @@ export default function RootLayout({
       </head>
       <body style={{ margin: 0 }}>
         <ThemeProvider theme={theme}>
-          <NotificationProvider>{children}</NotificationProvider>
+          <StateProvider initialState={initialState} reducer={formReducer}>
+            <NotificationProvider>{children}</NotificationProvider>
+          </StateProvider>
         </ThemeProvider>
       </body>
     </html>

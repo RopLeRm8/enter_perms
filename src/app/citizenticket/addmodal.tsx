@@ -1,6 +1,6 @@
 import useGetSteps from "@/lib/hooks/clientticket/useGetSteps";
 import useHandleModal from "@/lib/hooks/clientticket/useHandleModal";
-import { IAddModal, INilve, IValidatorFunction } from "@/types/ui";
+import { IAddModal, INilve } from "@/types/ui";
 import {
   Box,
   Dialog,
@@ -16,7 +16,7 @@ import {
 import { useState } from "react";
 
 export default function AddModal({ open, setOpen }: IAddModal) {
-  const { steps, isHayal } = useGetSteps();
+  const { state, steps, isHayal } = useGetSteps();
   const theme = useTheme();
   const [newNilve, setNewNilve] = useState<INilve>({
     humanType: "",
@@ -26,7 +26,7 @@ export default function AddModal({ open, setOpen }: IAddModal) {
     lastName: "",
   });
 
-  const { handleNewNilveChange, createNilve, state } = useHandleModal(
+  const { handleNewNilveChange, createNilve } = useHandleModal(
     newNilve,
     setNewNilve
   );
@@ -36,7 +36,11 @@ export default function AddModal({ open, setOpen }: IAddModal) {
       open={open}
       onClose={() => setOpen(false)}
       PaperProps={{
-        style: { minWidth: "45%", maxHeight: "60vh", borderRadius: "20px" },
+        style: {
+          minWidth: "45%",
+          maxHeight: "60vh",
+          borderRadius: "20px",
+        },
       }}
     >
       <DialogContent sx={{ py: 5 }}>
@@ -246,7 +250,14 @@ export default function AddModal({ open, setOpen }: IAddModal) {
                 Create
               </Button>
             </Box>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "1rem",
+                maxWidth: "35%",
+              }}
+            >
               {state.nilvim.map((nilve: INilve, index: number) => (
                 <Paper
                   key={index}
@@ -254,21 +265,24 @@ export default function AddModal({ open, setOpen }: IAddModal) {
                   sx={{
                     p: 2,
                     display: "flex",
-                    justifyContent: "center",
+                    justifyContent: "end",
                     alignItems: "center",
                     background: theme.palette.secondary.main,
                   }}
                 >
                   <Box sx={{ color: "white", display: "flex", gap: "0.3rem" }}>
                     <Typography
-                      sx={{ fontSize: "120%", color: "white" }}
-                    >{`${nilve.firstName} ${nilve.lastName}`}</Typography>
+                      sx={{
+                        fontSize: "120%",
+                        color: "white",
+                      }}
+                    >{`${nilve?.firstName} ${nilve?.lastName}`}</Typography>
                     {
                       steps[0].options[
                         steps[0].options.findIndex(
-                          (opt) => opt.optionname === nilve.humanType
+                          (opt) => opt.optionname === nilve?.humanType
                         )
-                      ].icon
+                      ]?.icon
                     }
                   </Box>
                 </Paper>

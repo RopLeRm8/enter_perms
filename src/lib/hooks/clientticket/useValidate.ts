@@ -37,10 +37,10 @@ export default function useValidate() {
   const checkEzor = checkSiba;
   const checkRehev = (rehev: IRehev) => {
     return (
-      rehev.vehicleNum.length > 4 &&
-      rehev.vehicleNum.length < 9 &&
-      rehev.vehicleCol.length > 2 &&
-      rehev.vehicleType.length > 0
+      rehev.vehicleNum?.length > 4 &&
+      rehev.vehicleNum?.length < 9 &&
+      rehev.vehicleCol?.length > 2 &&
+      rehev.vehicleType?.length > 0
     );
   };
   return {

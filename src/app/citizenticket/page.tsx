@@ -7,9 +7,12 @@ import {
   Badge,
   Box,
   Button,
+  FormControl,
   Grid,
+  InputLabel,
   MenuItem,
   MobileStepper,
+  Paper,
   Select,
   SelectChangeEvent,
   TextField,
@@ -66,6 +69,11 @@ export default function ClientTicket() {
       window.removeEventListener("keydown", handleNextStep);
     };
   }, [nextStep, open]);
+
+  useEffect(() => {
+    console.log(getFieldValue("nilvim"), state?.nilvim);
+  }, [getFieldValue, state]);
+
   return (
     <>
       <AddModal open={open} setOpen={setOpen} />
@@ -624,11 +632,56 @@ export default function ClientTicket() {
         ) : null}
         {currentStep.isNilvim ? (
           <>
-            {state[currentStep.fieldName].map(
-              (nilve: INilve, index: number) => (
-                <Typography key={index}>Nilve</Typography>
-              )
-            )}
+            <TextField
+              label="kaka"
+              select
+              variant="standard"
+              value=""
+              sx={{ minWidth: "20%", direction: "rtl" }}
+            >
+              {state[currentStep.fieldName].map(
+                (nilve: INilve, index: number) => (
+                  <MenuItem
+                    key={index}
+                    sx={{ display: "flex", justifyContent: "center" }}
+                  >
+                    <Paper
+                      elevation={5}
+                      sx={{
+                        p: 2,
+                        my: 2,
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        background: theme.palette.secondary.main,
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          color: "white",
+                          display: "flex",
+                          gap: "0.3rem",
+                        }}
+                      >
+                        <Typography
+                          sx={{
+                            fontSize: "120%",
+                            color: "white",
+                          }}
+                        >{`${nilve?.firstName} ${nilve?.lastName}`}</Typography>
+                        {
+                          steps[0].options[
+                            steps[0].options.findIndex(
+                              (opt) => opt.optionname === nilve?.humanType
+                            )
+                          ]?.icon
+                        }
+                      </Box>
+                    </Paper>
+                  </MenuItem>
+                )
+              )}
+            </TextField>
             <Button
               sx={{
                 fontFamily: "David",

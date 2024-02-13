@@ -8,7 +8,7 @@ export default function useHandleModal(
   newNilve: INilve,
   setNewNilve: React.Dispatch<React.SetStateAction<INilve>>
 ) {
-  const { state, setFieldValue, isHayal } = useGetSteps();
+  const { state, isHayal, setFieldValue } = useGetSteps();
   const { checkOption, checkId, checkSiba } = useValidate();
   const notifContext = useContext(NotificationContext);
   const setNotif = notifContext.setMessage;
@@ -51,7 +51,7 @@ export default function useHandleModal(
     }
   };
 
-  const createNilve = () => {
+  const createNilve = (): INilve | undefined => {
     let isValid = true;
     Object.entries(newNilve).forEach(([key, value]) => {
       if (key in FUNCVAL && isValid) {
@@ -87,5 +87,5 @@ export default function useHandleModal(
     });
   };
 
-  return { handleNewNilveChange, createNilve, state };
+  return { handleNewNilveChange, createNilve };
 }
