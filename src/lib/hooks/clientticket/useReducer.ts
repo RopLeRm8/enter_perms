@@ -34,7 +34,7 @@ export const initialState: IState = {
     vehicleType: "",
   },
   nilvim: [],
-  currentStep: 11,
+  currentStep: 0,
   modalOpen: false,
 };
 
