@@ -7,6 +7,7 @@ import {
   Badge,
   Box,
   Button,
+  Divider,
   FormControl,
   Grid,
   InputLabel,
@@ -69,10 +70,6 @@ export default function ClientTicket() {
       window.removeEventListener("keydown", handleNextStep);
     };
   }, [nextStep, open]);
-
-  useEffect(() => {
-    console.log(getFieldValue("nilvim"), state?.nilvim);
-  }, [getFieldValue, state]);
 
   return (
     <>
@@ -302,39 +299,56 @@ export default function ClientTicket() {
                       )
                     }
                   />
-                  <Select
-                    variant="standard"
-                    sx={{
-                      mt: 2,
-                      fontFamily: "David",
-                      width: "16rem",
-                      "& .MuiInputBase-input": {
-                        color: theme.palette.primary.main,
+                  <FormControl>
+                    <InputLabel
+                      id="vehicleTypeLabel"
+                      sx={{
+                        color: "rgba(0,0,0,.3)",
                         fontFamily: "David",
-                        fontSize: "130%",
-                      },
-                      "& .MuiInputBase-input::placeholder": {
-                        color: "gray",
-                        fontFamily: "David",
-                        fontSize: "110%",
-                      },
-                    }}
-                    value={state[currentStep.fieldName].vehicleType}
-                    onChange={(e: SelectChangeEvent<string>) => {
-                      handleInputChange(
-                        "vehicleDetails.vehicleType",
-                        e.target.value
-                      );
-                    }}
-                  >
-                    <MenuItem value="" disabled defaultChecked>
+                        fontSize: "140%",
+                        transform: "translateY(60%) translateX(210%)",
+                        display: state[currentStep.fieldName].vehicleType
+                          ? "none"
+                          : "flex",
+                      }}
+                    >
                       סוג רכב
-                    </MenuItem>
-                    <MenuItem value="Lambo">Lambo</MenuItem>
-                    <MenuItem value="Honda">Honda</MenuItem>
-                    <MenuItem value="Hyundai">Hyundai</MenuItem>
-                    <MenuItem value="Toyota">Toyota!</MenuItem>
-                  </Select>
+                    </InputLabel>
+                    <Select
+                      labelId="vehicleTypeLabel"
+                      variant="standard"
+                      sx={{
+                        mt: 2,
+                        fontFamily: "David",
+                        width: "14rem",
+                        "& .MuiInputBase-input": {
+                          color: theme.palette.primary.main,
+                          fontFamily: "David",
+                          fontSize: "130%",
+                        },
+                        "& .MuiInputBase-input::placeholder": {
+                          color: "gray",
+                          fontFamily: "David",
+                          fontSize: "110%",
+                        },
+                      }}
+                      value={state[currentStep.fieldName].vehicleType}
+                      onChange={(e: SelectChangeEvent<string>) => {
+                        handleInputChange(
+                          "vehicleDetails.vehicleType",
+                          e.target.value
+                        );
+                      }}
+                    >
+                      <MenuItem value="" disabled defaultChecked>
+                        סוג רכב
+                      </MenuItem>
+                      <MenuItem value="Lambo">Lambo</MenuItem>
+                      <MenuItem value="Honda">Honda</MenuItem>
+                      <MenuItem value="Hyundai">Hyundai</MenuItem>
+                      <MenuItem value="Toyota">Toyota!</MenuItem>
+                    </Select>
+                  </FormControl>
                 </>
               ) : currentStep.isMelave ? (
                 <>
@@ -632,62 +646,79 @@ export default function ClientTicket() {
         ) : null}
         {currentStep.isNilvim ? (
           <>
-            <TextField
-              label="kaka"
-              select
-              variant="standard"
-              value=""
-              sx={{ minWidth: "20%", direction: "rtl" }}
-            >
-              {state[currentStep.fieldName].map(
-                (nilve: INilve, index: number) => (
-                  <MenuItem
-                    key={index}
-                    sx={{ display: "flex", justifyContent: "center" }}
-                  >
-                    <Paper
-                      elevation={5}
-                      sx={{
-                        p: 2,
-                        my: 2,
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        background: theme.palette.secondary.main,
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          color: "white",
-                          display: "flex",
-                          gap: "0.3rem",
-                        }}
+            {state.nilvim.length > 0 ? (
+              <FormControl sx={{ minWidth: "10%", my: 2 }}>
+                <InputLabel
+                  id="vehicleTypeLabel"
+                  sx={{
+                    fontFamily: "David",
+                    color: theme.palette.primary.main,
+                    fontSize: "130%",
+                    transform: "translateX(110%)",
+                  }}
+                >
+                  רשימת נלווים
+                </InputLabel>
+                <TextField
+                  select
+                  variant="standard"
+                  value=""
+                  sx={{ minWidth: "20%" }}
+                  InputLabelProps={{
+                    sx: { textAlign: "center" },
+                  }}
+                >
+                  {state[currentStep.fieldName].map(
+                    (nilve: INilve, index: number) => (
+                      <MenuItem
+                        key={index}
+                        sx={{ display: "flex", justifyContent: "center" }}
                       >
-                        <Typography
+                        <Paper
+                          elevation={5}
                           sx={{
-                            fontSize: "120%",
-                            color: "white",
+                            p: 2,
+                            my: 2,
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            background: theme.palette.secondary.main,
                           }}
-                        >{`${nilve?.firstName} ${nilve?.lastName}`}</Typography>
-                        {
-                          steps[0].options[
-                            steps[0].options.findIndex(
-                              (opt) => opt.optionname === nilve?.humanType
-                            )
-                          ]?.icon
-                        }
-                      </Box>
-                    </Paper>
-                  </MenuItem>
-                )
-              )}
-            </TextField>
+                        >
+                          <Box
+                            sx={{
+                              color: "white",
+                              display: "flex",
+                              gap: "0.3rem",
+                            }}
+                          >
+                            <Typography
+                              sx={{
+                                fontSize: "120%",
+                                color: "white",
+                              }}
+                            >{`${nilve?.firstName} ${nilve?.lastName}`}</Typography>
+                            {
+                              steps[0].options[
+                                steps[0].options.findIndex(
+                                  (opt) => opt.optionname === nilve?.humanType
+                                )
+                              ]?.icon
+                            }
+                          </Box>
+                        </Paper>
+                      </MenuItem>
+                    )
+                  )}
+                </TextField>
+              </FormControl>
+            ) : null}
             <Button
               sx={{
                 fontFamily: "David",
                 fontSize: "150%",
                 background: theme.palette.primary.main,
-                px: 2,
+                px: 6,
                 my: 2,
               }}
               onClick={() => {
@@ -697,6 +728,18 @@ export default function ClientTicket() {
             >
               הוספת נלווים
             </Button>
+            <Divider
+              sx={{
+                width: "8.3%",
+                fontSize: "120%",
+                opacity: 0.8,
+                "&:before": { borderColor: theme.palette.secondary.main },
+                "&:after": { borderColor: theme.palette.secondary.main },
+                color: theme.palette.primary.main,
+              }}
+            >
+              או
+            </Divider>
           </>
         ) : null}
         <Button

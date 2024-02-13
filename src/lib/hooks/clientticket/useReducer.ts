@@ -54,7 +54,6 @@ export function formReducer(state: IState, action: IAction): IState {
             },
           };
         } else {
-          console.log(state);
           return {
             ...state,
             [fieldPath]: value,

@@ -12,6 +12,8 @@ import {
   MenuItem,
   Paper,
   Select,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import { useState } from "react";
 
@@ -77,64 +79,36 @@ export default function AddModal({ open, setOpen }: IAddModal) {
                 gap: "1rem",
               }}
             >
-              <Select
-                value={newNilve.humanType}
-                size="small"
-                onChange={(e) =>
-                  handleNewNilveChange("humanType", e.target.value)
-                }
-                sx={{
-                  direction: "rtl",
-                  "& .MuiInputBase-input": {
-                    color: theme.palette.primary.main,
+              <FormControl fullWidth>
+                <InputLabel
+                  id="tafkidlabel"
+                  sx={{
+                    color: "rgba(0,0,0,.3)",
                     fontFamily: "David",
                     fontSize: "110%",
-                  },
-                  "& .MuiInputBase-input::focus": {
-                    border: "1px solid red",
-                  },
-                  "& .MuiInputBase-input::placeholder": {
-                    color: "gray",
-                    fontFamily: "David",
-                    fontSize: "110%",
-                  },
-                }}
-              >
-                <MenuItem value="" disabled sx={{ direction: "rtl" }}>
+                    transform: "translateY(35%) translateX(160%)",
+                    display: newNilve.humanType ? "none" : "flex",
+                  }}
+                >
                   בחר תפקיד
-                </MenuItem>
-                {steps[0].options.map((opt, ind) => (
-                  <MenuItem
-                    key={ind}
-                    value={opt.optionname}
-                    sx={{ direction: "rtl" }}
-                  >
-                    <Box
-                      sx={{
-                        display: "flex",
-                        gap: "1rem",
-                        alignItems: "center",
-                      }}
-                    >
-                      {opt.icon}
-                      {opt.optionname}
-                    </Box>
-                  </MenuItem>
-                ))}
-              </Select>
-              {newNilve.humanType === "עובד תעשייה" ? (
+                </InputLabel>
                 <Select
-                  value={newNilve.taasiaType}
+                  value={newNilve.humanType}
+                  labelId="tafkidlabel"
                   size="small"
                   onChange={(e) =>
-                    handleNewNilveChange("taasiaType", e.target.value)
+                    handleNewNilveChange("humanType", e.target.value)
                   }
+                  defaultValue=""
                   sx={{
                     direction: "rtl",
                     "& .MuiInputBase-input": {
                       color: theme.palette.primary.main,
                       fontFamily: "David",
                       fontSize: "110%",
+                    },
+                    "& .MuiInputBase-input::focus": {
+                      border: "1px solid red",
                     },
                     "& .MuiInputBase-input::placeholder": {
                       color: "gray",
@@ -144,9 +118,9 @@ export default function AddModal({ open, setOpen }: IAddModal) {
                   }}
                 >
                   <MenuItem value="" disabled sx={{ direction: "rtl" }}>
-                    בחר תעשייה
+                    בחר תפקיד
                   </MenuItem>
-                  {steps[1].options.map((opt, ind) => (
+                  {steps[0].options.map((opt, ind) => (
                     <MenuItem
                       key={ind}
                       value={opt.optionname}
@@ -165,8 +139,67 @@ export default function AddModal({ open, setOpen }: IAddModal) {
                     </MenuItem>
                   ))}
                 </Select>
-              ) : null}
+              </FormControl>
 
+              {newNilve.humanType === "עובד תעשייה" ? (
+                <FormControl>
+                  <InputLabel
+                    id="taasialabel"
+                    sx={{
+                      color: "rgba(0,0,0,.3)",
+                      fontFamily: "David",
+                      fontSize: "110%",
+                      transform: "translateY(35%) translateX(135%)",
+                      display: newNilve.taasiaType ? "none" : "flex",
+                    }}
+                  >
+                    בחר תעשייה
+                  </InputLabel>
+                  <Select
+                    labelId="taasialabel"
+                    value={newNilve.taasiaType}
+                    size="small"
+                    onChange={(e) =>
+                      handleNewNilveChange("taasiaType", e.target.value)
+                    }
+                    sx={{
+                      direction: "rtl",
+                      "& .MuiInputBase-input": {
+                        color: theme.palette.primary.main,
+                        fontFamily: "David",
+                        fontSize: "110%",
+                      },
+                      "& .MuiInputBase-input::placeholder": {
+                        color: "gray",
+                        fontFamily: "David",
+                        fontSize: "110%",
+                      },
+                    }}
+                  >
+                    <MenuItem value="" disabled sx={{ direction: "rtl" }}>
+                      בחר תעשייה
+                    </MenuItem>
+                    {steps[1].options.map((opt, ind) => (
+                      <MenuItem
+                        key={ind}
+                        value={opt.optionname}
+                        sx={{ direction: "rtl" }}
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            gap: "1rem",
+                            alignItems: "center",
+                          }}
+                        >
+                          {opt.icon}
+                          {opt.optionname}
+                        </Box>
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              ) : null}
               <TextField
                 placeholder={
                   isHayal(newNilve.humanType) ? "מספר אישי" : "תעודת זהות"
@@ -245,9 +278,10 @@ export default function AddModal({ open, setOpen }: IAddModal) {
                   px: 2,
                   mt: 2,
                   fontFamily: "David",
+                  fontSize: "120%",
                 }}
               >
-                Create
+                יצירת נלווה חדש
               </Button>
             </Box>
             <Box
