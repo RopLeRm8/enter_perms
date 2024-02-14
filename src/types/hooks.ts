@@ -74,4 +74,20 @@ type ActionType =
   | { type: "PREVIOUS_STEP" }
   | { type: "TWO_PREVIOUS_STEPS" };
 
-export type { IStep, IState, ActionType, IUseGetSteps, IAction };
+interface ISikumValue {
+  [key: string]: string | ISikumValue | string[] | INilve;
+}
+
+interface ISikumEntry {
+  [stepName: string]: ISikumValue | string | string[];
+}
+
+export type {
+  IStep,
+  IState,
+  ActionType,
+  IUseGetSteps,
+  IAction,
+  ISikumValue,
+  ISikumEntry,
+};

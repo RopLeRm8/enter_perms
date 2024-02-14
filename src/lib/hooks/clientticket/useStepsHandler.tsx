@@ -1,4 +1,4 @@
-import { IStep } from "@/types/hooks";
+import { ISikumEntry, ISikumValue, IStep } from "@/types/hooks";
 import { useContext } from "react";
 import EmojiPeopleIcon from "@mui/icons-material/EmojiPeople";
 import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
@@ -19,7 +19,19 @@ import { INilve } from "@/types/ui";
 import { NotificationContext } from "@/contexts/NotificationContext";
 import { useStateValue } from "@/providers/StateProvider";
 
-export default function useGetSteps() {
+const fieldLabels: { [key: string]: string } = {
+  firstName: "שם פרטי",
+  lastName: "שם משפחה",
+  misparIshi: "תעודה מזהה",
+  phone: "מספר טלפון",
+  startDate: "תהליך ההתחלה",
+  endDate: "תהליך סיום",
+  vehicleNum: "מספר אוטו",
+  vehicleCol: "צבע האוטו",
+  vehicleType: "סוג אוטו",
+};
+
+export default function useStepsHandler() {
   const [state, dispatch] = useStateValue();
   const notifContext = useContext(NotificationContext);
   const setNotif = notifContext.setMessage;
@@ -176,7 +188,7 @@ export default function useGetSteps() {
     },
     {
       name: "הזן תעודת זהות",
-      label: "תעודת זהות",
+      label: "תעודה מזהה",
       fieldName: "idNumber",
       isTz: true,
       onlyNum: true,
@@ -245,7 +257,7 @@ export default function useGetSteps() {
     },
     {
       name: "אישור כניסה עם רכב?",
-      label: "אישור כניסה ברכ",
+      label: "אישור כניסה ברכב",
       validateFn: checkOption,
       options: [
         {
@@ -279,6 +291,42 @@ export default function useGetSteps() {
     },
   ] as IStep[];
 
+  const getSikum = (): ISikumEntry[] => {
+    const sikum: ISikumEntry[] = [];
+    Object.entries(state).forEach(([key, value]: [string, ISikumEntry]) => {
+      const stepName: string | undefined = steps.find(
+        (step) => step.fieldName === key
+      )?.label;
+      if (!stepName) return;
+
+      if (Array.isArray(value) && value.length > 0) {
+        sikum.push({ [stepName]: value });
+      } else if (typeof value === "object" && value !== null) {
+        const labeledObject = Object.entries(value).reduce(
+          (acc, [subKey, subValue]) => {
+            const label: keyof typeof fieldLabels =
+              fieldLabels[subKey] || subKey;
+            if (subValue !== "") {
+              acc[label as keyof ISikumValue] = subValue;
+            }
+            return acc;
+          },
+          {} as ISikumValue
+        );
+
+        if (Object.keys(labeledObject).length > 0) {
+          sikum.push({ [stepName]: labeledObject });
+        }
+      } else {
+        if (value !== "") {
+          sikum.push({ [stepName]: value });
+        }
+      }
+    });
+
+    return sikum;
+  };
+
   return {
     state,
     setFieldValue,
@@ -288,5 +336,6 @@ export default function useGetSteps() {
     steps,
     isValid,
     isHayal,
+    getSikum,
   };
 }

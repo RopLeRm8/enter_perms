@@ -1,6 +1,6 @@
 "use client";
 
-import useGetSteps from "@/lib/hooks/clientticket/useGetSteps";
+import useStepsHandler from "@/lib/hooks/clientticket/useStepsHandler";
 import useHandleDates from "@/lib/hooks/clientticket/useHandleDates";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import {
@@ -20,9 +20,10 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import AddModal from "./addmodal";
 import { INilve } from "@/types/ui";
+import { IState } from "@/types/hooks";
 
 export default function ClientTicket() {
   const {
@@ -34,7 +35,9 @@ export default function ClientTicket() {
     steps,
     isValid,
     isHayal,
-  } = useGetSteps();
+    getSikum,
+  } = useStepsHandler();
+  const sikum = getSikum();
   const [open, setOpen] = useState<boolean>(false);
   const { today, maxDate, setToday, maxTodayDate, todayInit } =
     useHandleDates();
@@ -60,6 +63,7 @@ export default function ClientTicket() {
         nextStep();
       }
     };
+
     if (open) {
       window.removeEventListener("keydown", handleNextStep);
       return;
@@ -70,6 +74,13 @@ export default function ClientTicket() {
       window.removeEventListener("keydown", handleNextStep);
     };
   }, [nextStep, open]);
+
+  useEffect(() => {
+    if (!state.approvalPeriod.startDate || !state.approvalPeriod.endDate) {
+      setFieldValue("approvalPeriod.startDate", today);
+      setFieldValue("approvalPeriod.endDate", today);
+    }
+  }, [state.approvalPeriod, setFieldValue, today]);
 
   return (
     <>
@@ -140,7 +151,7 @@ export default function ClientTicket() {
           display: "flex",
           alignItems: "center",
           flexDirection: "column",
-          mt: 20,
+          mt: steps.indexOf(currentStep) === steps.length - 1 ? 5 : 20,
         }}
       >
         <Typography
@@ -525,7 +536,6 @@ export default function ClientTicket() {
               <TextField
                 type="date"
                 value={state[currentStep.fieldName].startDate}
-                defaultValue={today}
                 inputProps={{
                   min: todayInit,
                   max: maxTodayDate,
@@ -541,7 +551,6 @@ export default function ClientTicket() {
               <TextField
                 type="date"
                 value={state[currentStep.fieldName].endDate}
-                defaultValue={today}
                 inputProps={{
                   min: today,
                   max: maxDate,
@@ -654,7 +663,7 @@ export default function ClientTicket() {
                     fontFamily: "David",
                     color: theme.palette.primary.main,
                     fontSize: "130%",
-                    transform: "translateX(110%)",
+                    transform: "translateX(40%)",
                   }}
                 >
                   רשימת נלווים
@@ -742,6 +751,74 @@ export default function ClientTicket() {
             </Divider>
           </>
         ) : null}
+        {currentStep.isSikum ? (
+          <Grid
+            container
+            direction="row-reverse"
+            alignItems="center"
+            spacing={2}
+            sx={{ maxWidth: "50%" }}
+          >
+            {sikum.map((entry, index) => (
+              <Grid
+                item
+                xs={8}
+                key={index}
+                sx={{
+                  display: "flex",
+                  flexDirection: "row-reverse",
+                  alignItems: "center",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: "130%",
+                    ml: 3,
+                    whiteSpace: "nowrap",
+                    color: theme.palette.primary.main,
+                  }}
+                >
+                  :{Object.keys(entry)[0]}
+                </Typography>
+                {typeof Object.values(entry)[0] === "object" ? (
+                  Object.entries(
+                    Object.values(entry)[0] as Record<string, INilve | string>
+                  ).map(([label, value], idx) => (
+                    <Box key={idx}>
+                      <Typography
+                        sx={{
+                          color: theme.palette.secondary.main,
+                          direction: "rtl",
+                          whiteSpace: "nowrap",
+                          ml: 3,
+                        }}
+                      >
+                        {typeof value === "object" ? (
+                          <Typography>{`${value.firstName} ${value.lastName}`}</Typography>
+                        ) : (
+                          <>
+                            {`${label}:`}{" "}
+                            <Typography
+                              sx={{
+                                fontSize: "105%",
+                                color: theme.palette.primary.main,
+                                fontWeight: 600,
+                              }}
+                            >{`${value}`}</Typography>
+                          </>
+                        )}
+                      </Typography>
+                    </Box>
+                  ))
+                ) : (
+                  <Typography sx={{ color: theme.palette.secondary.main }}>
+                    {Object.values(entry)[0] as ReactNode}
+                  </Typography>
+                )}
+              </Grid>
+            ))}
+          </Grid>
+        ) : null}
         <Button
           sx={{
             fontFamily: "David",
@@ -749,6 +826,7 @@ export default function ClientTicket() {
             background: theme.palette.secondary.main,
             mt: 3,
             px: 10,
+            mb: 5,
           }}
           onClick={nextStep}
           disabled={!isValid(true)}

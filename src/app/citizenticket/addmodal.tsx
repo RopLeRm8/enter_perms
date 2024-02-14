@@ -1,4 +1,4 @@
-import useGetSteps from "@/lib/hooks/clientticket/useGetSteps";
+import useStepsHandler from "@/lib/hooks/clientticket/useStepsHandler";
 import useHandleModal from "@/lib/hooks/clientticket/useHandleModal";
 import { IAddModal, INilve } from "@/types/ui";
 import {
@@ -18,7 +18,7 @@ import {
 import { useState } from "react";
 
 export default function AddModal({ open, setOpen }: IAddModal) {
-  const { state, steps, isHayal } = useGetSteps();
+  const { state, steps, isHayal } = useStepsHandler();
   const theme = useTheme();
   const [newNilve, setNewNilve] = useState<INilve>({
     humanType: "",

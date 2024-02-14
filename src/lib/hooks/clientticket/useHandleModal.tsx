@@ -1,6 +1,6 @@
 import { INilve, IValidatorFunction } from "@/types/ui";
 import useValidate from "./useValidate";
-import useGetSteps from "@/lib/hooks/clientticket/useGetSteps";
+import useStepHandlers from "@/lib/hooks/clientticket/useStepsHandler";
 import { NotificationContext } from "../../../contexts/NotificationContext";
 import { useContext } from "react";
 
@@ -8,7 +8,7 @@ export default function useHandleModal(
   newNilve: INilve,
   setNewNilve: React.Dispatch<React.SetStateAction<INilve>>
 ) {
-  const { state, isHayal, setFieldValue } = useGetSteps();
+  const { state, isHayal, setFieldValue, getSikum } = useStepHandlers();
   const { checkOption, checkId, checkSiba } = useValidate();
   const notifContext = useContext(NotificationContext);
   const setNotif = notifContext.setMessage;
