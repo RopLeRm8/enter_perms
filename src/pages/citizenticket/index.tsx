@@ -20,15 +20,14 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 import AddModal from "./addmodal";
 import { INilve } from "@/types/ui";
-import { IState } from "@/types/hooks";
+import usePassive from "@/lib/hooks/clientticket/usePassive";
 
 export default function ClientTicket() {
   const {
     state,
-    setFieldValue,
     getFieldValue,
     nextStep,
     previousStep,
@@ -36,51 +35,15 @@ export default function ClientTicket() {
     isValid,
     isHayal,
     getSikum,
+    handleInputChange,
   } = useStepsHandler();
   const sikum = getSikum();
   const [open, setOpen] = useState<boolean>(false);
   const { today, maxDate, setToday, maxTodayDate, todayInit } =
     useHandleDates();
   const currentStep = steps[state.currentStep];
-
-  const handleInputChange = (
-    fieldPath: string,
-    value: string,
-    onlynums?: boolean
-  ) => {
-    if (!onlynums) {
-      setFieldValue(fieldPath, value);
-    } else if (onlynums && /^\d*$/.test(value)) {
-      return setFieldValue(fieldPath, value);
-    }
-  };
-
   const theme = useTheme();
-
-  useEffect(() => {
-    const handleNextStep = (e: KeyboardEvent) => {
-      if (e.key === "Enter") {
-        nextStep();
-      }
-    };
-
-    if (open) {
-      window.removeEventListener("keydown", handleNextStep);
-      return;
-    }
-    window.addEventListener("keydown", handleNextStep);
-
-    return () => {
-      window.removeEventListener("keydown", handleNextStep);
-    };
-  }, [nextStep, open]);
-
-  useEffect(() => {
-    if (!state.approvalPeriod.startDate || !state.approvalPeriod.endDate) {
-      setFieldValue("approvalPeriod.startDate", today);
-      setFieldValue("approvalPeriod.endDate", today);
-    }
-  }, [state.approvalPeriod, setFieldValue, today]);
+  usePassive(open);
 
   return (
     <>
@@ -785,19 +748,25 @@ export default function ClientTicket() {
                     Object.values(entry)[0] as Record<string, INilve | string>
                   ).map(([label, value], idx) => (
                     <Box key={idx}>
-                      <Typography
+                      <Box
                         sx={{
                           color: theme.palette.secondary.main,
                           direction: "rtl",
                           whiteSpace: "nowrap",
                           ml: 3,
+                          fontSize: "105%",
                         }}
                       >
                         {typeof value === "object" ? (
-                          <Typography>{`${value.firstName} ${value.lastName}`}</Typography>
+                          <Typography>{`${value.firstName} ${value.lastName}  ${
+                            (Object.values(entry)[0].length as number) - 1 !==
+                            idx
+                              ? ","
+                              : ""
+                          }`}</Typography>
                         ) : (
                           <>
-                            {`${label}:`}{" "}
+                            {`${label}:`}
                             <Typography
                               sx={{
                                 fontSize: "105%",
@@ -807,7 +776,7 @@ export default function ClientTicket() {
                             >{`${value}`}</Typography>
                           </>
                         )}
-                      </Typography>
+                      </Box>
                     </Box>
                   ))
                 ) : (

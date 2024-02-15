@@ -46,7 +46,7 @@ export default function useStepsHandler() {
     checkRehev,
   } = useValidate();
 
-  const nextStep = () => {
+  const nextStep = async () => {
     if (!isValid()) return;
     dispatch({ type: "NEXT_STEP" });
     if (isCurrentStep(0) && !isTaasia()) {
@@ -327,6 +327,18 @@ export default function useStepsHandler() {
     return sikum;
   };
 
+  const handleInputChange = (
+    fieldPath: string,
+    value: string,
+    onlynums?: boolean
+  ): void => {
+    if (!onlynums) {
+      setFieldValue(fieldPath, value);
+    } else if (onlynums && /^\d*$/.test(value)) {
+      return setFieldValue(fieldPath, value);
+    }
+  };
+
   return {
     state,
     setFieldValue,
@@ -337,5 +349,6 @@ export default function useStepsHandler() {
     isValid,
     isHayal,
     getSikum,
+    handleInputChange,
   };
 }
