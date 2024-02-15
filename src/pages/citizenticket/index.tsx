@@ -4,6 +4,7 @@ import useStepsHandler from "@/lib/hooks/clientticket/useStepsHandler";
 import useHandleDates from "@/lib/hooks/clientticket/useHandleDates";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import {
+  Autocomplete,
   Badge,
   Box,
   Button,
@@ -24,6 +25,7 @@ import { ReactNode, useState } from "react";
 import AddModal from "./addmodal";
 import { INilve } from "@/types/ui";
 import usePassive from "@/lib/hooks/clientticket/usePassive";
+import useGetCars from "@/lib/hooks/clientticket/useGetCars";
 
 export default function ClientTicket() {
   const {
@@ -36,15 +38,16 @@ export default function ClientTicket() {
     isHayal,
     getSikum,
     handleInputChange,
+    setFieldValue,
   } = useStepsHandler();
   const sikum = getSikum();
   const [open, setOpen] = useState<boolean>(false);
   const { today, maxDate, setToday, maxTodayDate, todayInit } =
     useHandleDates();
   const currentStep = steps[state.currentStep];
+  const { data: cars } = useGetCars();
   const theme = useTheme();
   usePassive(open);
-
   return (
     <>
       <AddModal open={open} setOpen={setOpen} />
@@ -273,56 +276,55 @@ export default function ClientTicket() {
                       )
                     }
                   />
-                  <FormControl>
-                    <InputLabel
-                      id="vehicleTypeLabel"
-                      sx={{
-                        color: "rgba(0,0,0,.3)",
+
+                  <Autocomplete
+                    sx={{
+                      mt: 2,
+                      fontFamily: "David",
+                      width: "14rem",
+                      "& .MuiInputBase-input": {
+                        color: theme.palette.primary.main,
                         fontFamily: "David",
-                        fontSize: "140%",
-                        transform: "translateY(60%) translateX(210%)",
-                        display: state[currentStep.fieldName].vehicleType
-                          ? "none"
-                          : "flex",
-                      }}
-                    >
-                      סוג רכב
-                    </InputLabel>
-                    <Select
-                      labelId="vehicleTypeLabel"
-                      variant="standard"
-                      sx={{
-                        mt: 2,
+                        fontSize: "130%",
+                      },
+                      "& .MuiInputBase-input::placeholder": {
+                        color: "gray",
                         fontFamily: "David",
-                        width: "14rem",
-                        "& .MuiInputBase-input": {
-                          color: theme.palette.primary.main,
+                        fontSize: "110%",
+                      },
+                    }}
+                    value={state[currentStep.fieldName].vehicleType}
+                    onChange={(_, newValue) => {
+                      handleInputChange("vehicleDetails.vehicleType", newValue);
+                    }}
+                    inputValue={state.searchValue}
+                    onInputChange={(_, newInputValue) => {
+                      setFieldValue("searchValue", newInputValue);
+                    }}
+                    options={cars as string[]}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        placeholder="סוג רכב"
+                        dir="rtl"
+                        variant="standard"
+                        sx={{
+                          direction: "rtl",
                           fontFamily: "David",
-                          fontSize: "130%",
-                        },
-                        "& .MuiInputBase-input::placeholder": {
-                          color: "gray",
-                          fontFamily: "David",
-                          fontSize: "110%",
-                        },
-                      }}
-                      value={state[currentStep.fieldName].vehicleType}
-                      onChange={(e: SelectChangeEvent<string>) => {
-                        handleInputChange(
-                          "vehicleDetails.vehicleType",
-                          e.target.value
-                        );
-                      }}
-                    >
-                      <MenuItem value="" disabled defaultChecked>
-                        סוג רכב
-                      </MenuItem>
-                      <MenuItem value="Lambo">Lambo</MenuItem>
-                      <MenuItem value="Honda">Honda</MenuItem>
-                      <MenuItem value="Hyundai">Hyundai</MenuItem>
-                      <MenuItem value="Toyota">Toyota!</MenuItem>
-                    </Select>
-                  </FormControl>
+                          "& .MuiInputBase-input": {
+                            color: theme.palette.primary.main,
+                            fontFamily: "David",
+                            fontSize: "130%",
+                          },
+                          "& .MuiInputBase-root::placeholder": {
+                            color: "gray",
+                            fontFamily: "David",
+                            fontSize: "110%",
+                          },
+                        }}
+                      />
+                    )}
+                  />
                 </>
               ) : currentStep.isMelave ? (
                 <>

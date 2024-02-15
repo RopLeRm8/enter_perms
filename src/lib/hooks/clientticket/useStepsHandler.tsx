@@ -18,6 +18,7 @@ import useValidate from "./useValidate";
 import { INilve } from "@/types/ui";
 import { NotificationContext } from "@/contexts/NotificationContext";
 import { useStateValue } from "@/providers/StateProvider";
+import { useGetData } from "../api/useGetData";
 
 const fieldLabels: { [key: string]: string } = {
   firstName: "שם פרטי",
@@ -36,6 +37,7 @@ export default function useStepsHandler() {
   const notifContext = useContext(NotificationContext);
   const setNotif = notifContext.setMessage;
   const setIsError = notifContext.setIsError;
+  const { request } = useGetData();
   const {
     checkId,
     checkOption,
@@ -47,6 +49,10 @@ export default function useStepsHandler() {
   } = useValidate();
 
   const nextStep = async () => {
+    request({
+      url: "api/getcars",
+      method: "GET",
+    });
     if (!isValid()) return;
     dispatch({ type: "NEXT_STEP" });
     if (isCurrentStep(0) && !isTaasia()) {

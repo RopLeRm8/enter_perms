@@ -1,3 +1,4 @@
+import { AxiosRequestConfig } from "axios";
 import { INilve } from "./ui";
 
 interface IOptions {
@@ -56,6 +57,7 @@ interface IState {
   nilvim: INilve[];
   currentStep: number;
   modalOpen: boolean;
+  searchValue: string;
 }
 
 interface IUseGetSteps {
@@ -82,6 +84,15 @@ interface ISikumEntry {
   [stepName: string]: ISikumValue | string | string[];
 }
 
+type IMessageResponse<T> = { data: T };
+
+interface IUseApiResponse<T> {
+  data: T | undefined;
+  setData: React.Dispatch<React.SetStateAction<T | undefined>>;
+  loading: boolean;
+  request: (config: AxiosRequestConfig) => void;
+}
+
 export type {
   IStep,
   IState,
@@ -90,4 +101,6 @@ export type {
   IAction,
   ISikumValue,
   ISikumEntry,
+  IMessageResponse,
+  IUseApiResponse,
 };
