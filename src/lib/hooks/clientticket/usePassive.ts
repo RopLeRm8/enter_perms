@@ -1,9 +1,9 @@
 import { useEffect } from "react";
-import useStepsHandler from "./useStepsHandler";
+import useReducerHandler from "./useReducerHandler";
 import useHandleDates from "./useHandleDates";
 
 export default function usePassive(open: boolean) {
-  const { state, nextStep, setFieldValue } = useStepsHandler();
+  const { state, nextStep, setFieldValue } = useReducerHandler();
   const { today } = useHandleDates();
   useEffect(() => {
     const handleNextStep = (e: KeyboardEvent) => {

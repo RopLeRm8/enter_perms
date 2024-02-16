@@ -4,13 +4,13 @@ import axios, { AxiosRequestConfig } from "axios";
 import { useContext, useState } from "react";
 import { useMutation } from "react-query";
 
-export const useGetData = <T>(): IUseApiResponse<T> => {
+export const useSendApiReq = <T>(): IUseApiResponse<T> => {
   const [data, setData] = useState<T>();
   const [loading, setLoading] = useState<boolean>(false);
   const notifContext = useContext(NotificationContext);
   const setNotif = notifContext.setMessage;
   const setIsError = notifContext.setIsError;
-  const { mutate } = useMutation<T, Error, AxiosRequestConfig>(
+  const { mutate } = useMutation<T>(
     async (config: AxiosRequestConfig) => {
       setLoading(true);
       const response = await axios({
@@ -20,14 +20,14 @@ export const useGetData = <T>(): IUseApiResponse<T> => {
       return response.data;
     },
     {
-      onSuccess: (msg) => {
+      onSuccess: (msg: T | undefined) => {
         setData((msg as IMessageResponse<T>).data ?? msg);
       },
-      onError: (err) => {
+      onError: (err: Error) => {
         if (axios.isAxiosError(err) && err.response?.data.error) {
           setNotif(`שגיאה: ${err.response.data.error}`);
         } else {
-          setNotif(err.message || "בעיה בלתי צפויה קרתה");
+          setNotif("בעיה בלתי צפויה קרתה");
         }
         setIsError(true);
       },

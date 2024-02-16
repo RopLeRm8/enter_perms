@@ -1,6 +1,6 @@
 import { INilve, IValidatorFunction } from "@/types/ui";
 import useValidate from "./useValidate";
-import useStepHandlers from "@/lib/hooks/clientticket/useStepsHandler";
+import useReducerHandler from "@/lib/hooks/clientticket/useReducerHandler";
 import { NotificationContext } from "../../../contexts/NotificationContext";
 import { useContext } from "react";
 
@@ -8,7 +8,7 @@ export default function useHandleModal(
   newNilve: INilve,
   setNewNilve: React.Dispatch<React.SetStateAction<INilve>>
 ) {
-  const { state, isHayal, setFieldValue, getSikum } = useStepHandlers();
+  const { state, isHayal, setFieldValue } = useReducerHandler();
   const { checkOption, checkId, checkSiba } = useValidate();
   const notifContext = useContext(NotificationContext);
   const setNotif = notifContext.setMessage;
@@ -25,7 +25,7 @@ export default function useHandleModal(
     field: string,
     value: string,
     onlynums?: boolean
-  ) => {
+  ): void => {
     if (field === "humanType") {
       setNewNilve((prev) => ({
         ...prev,
@@ -87,5 +87,12 @@ export default function useHandleModal(
     });
   };
 
-  return { handleNewNilveChange, createNilve };
+  const removeNilve = (nilvetoremove: INilve): void => {
+    const removedNilveArr = state.nilvim.filter(
+      (nilve) => nilve.id !== nilvetoremove.id
+    );
+    setFieldValue("nilvim", [...removedNilveArr]);
+  };
+
+  return { handleNewNilveChange, createNilve, removeNilve };
 }

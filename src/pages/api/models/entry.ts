@@ -5,6 +5,14 @@ class Entry extends Model {}
 
 Entry.init(
   {
+    HumenType: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    IndustryType: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     IDPerson: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -17,13 +25,9 @@ Entry.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    HumenType: {
+    EntryReason: {
       type: DataTypes.STRING,
       allowNull: false,
-    },
-    IndustryType: {
-      type: DataTypes.STRING,
-      allowNull: true,
     },
     ID_Guarantor: {
       type: DataTypes.STRING,
@@ -74,6 +78,7 @@ Entry.init(
     sequelize,
     modelName: "entry",
     tableName: "soldiersentry",
+    updatedAt: false,
   }
 );
 

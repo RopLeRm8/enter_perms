@@ -1,6 +1,6 @@
 "use client";
 
-import useStepsHandler from "@/lib/hooks/clientticket/useStepsHandler";
+import useReducerHandler from "@/lib/hooks/clientticket/useReducerHandler";
 import useHandleDates from "@/lib/hooks/clientticket/useHandleDates";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import {
@@ -8,6 +8,7 @@ import {
   Badge,
   Box,
   Button,
+  CircularProgress,
   Divider,
   FormControl,
   Grid,
@@ -15,9 +16,8 @@ import {
   MenuItem,
   MobileStepper,
   Paper,
-  Select,
-  SelectChangeEvent,
   TextField,
+  Tooltip,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -26,6 +26,7 @@ import AddModal from "./addmodal";
 import { INilve } from "@/types/ui";
 import usePassive from "@/lib/hooks/clientticket/usePassive";
 import useGetCars from "@/lib/hooks/clientticket/useGetCars";
+import { ICars } from "@/types/api";
 
 export default function ClientTicket() {
   const {
@@ -39,7 +40,8 @@ export default function ClientTicket() {
     getSikum,
     handleInputChange,
     setFieldValue,
-  } = useStepsHandler();
+    loading,
+  } = useReducerHandler();
   const sikum = getSikum();
   const [open, setOpen] = useState<boolean>(false);
   const { today, maxDate, setToday, maxTodayDate, todayInit } =
@@ -48,6 +50,7 @@ export default function ClientTicket() {
   const { data: cars } = useGetCars();
   const theme = useTheme();
   usePassive(open);
+
   return (
     <>
       <AddModal open={open} setOpen={setOpen} />
@@ -282,6 +285,7 @@ export default function ClientTicket() {
                       mt: 2,
                       fontFamily: "David",
                       width: "14rem",
+                      color: "red",
                       "& .MuiInputBase-input": {
                         color: theme.palette.primary.main,
                         fontFamily: "David",
@@ -293,36 +297,94 @@ export default function ClientTicket() {
                         fontSize: "110%",
                       },
                     }}
-                    value={state[currentStep.fieldName].vehicleType}
+                    value={
+                      cars?.find(
+                        (car) =>
+                          car.englishName ===
+                          state[currentStep.fieldName].vehicleType
+                      ) || null
+                    }
                     onChange={(_, newValue) => {
-                      handleInputChange("vehicleDetails.vehicleType", newValue);
+                      handleInputChange(
+                        "vehicleDetails.vehicleType",
+                        newValue?.englishName ?? ""
+                      );
                     }}
+                    getOptionLabel={(option) => option.englishName ?? ""}
                     inputValue={state.searchValue}
                     onInputChange={(_, newInputValue) => {
                       setFieldValue("searchValue", newInputValue);
                     }}
-                    options={cars as string[]}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        placeholder="סוג רכב"
-                        dir="rtl"
-                        variant="standard"
-                        sx={{
-                          direction: "rtl",
-                          fontFamily: "David",
-                          "& .MuiInputBase-input": {
+                    options={cars ?? []}
+                    disabled={!cars}
+                    filterOptions={(options, { inputValue }) => {
+                      return options.filter(
+                        (option) =>
+                          option.englishName
+                            .toLowerCase()
+                            .includes(inputValue.toLowerCase()) ||
+                          option.hebrewName
+                            .toLowerCase()
+                            .includes(inputValue.toLowerCase())
+                      );
+                    }}
+                    renderOption={(props, option: ICars) => (
+                      <Box component="li" {...props}>
+                        <Typography
+                          sx={{
                             color: theme.palette.primary.main,
-                            fontFamily: "David",
-                            fontSize: "130%",
+                            fontSize: "120%",
+                          }}
+                        >
+                          {option.englishName} |{" "}
+                          <span style={{ color: theme.palette.secondary.main }}>
+                            {option.hebrewName}
+                          </span>
+                        </Typography>
+                      </Box>
+                    )}
+                    renderInput={(params) => (
+                      <Tooltip
+                        title="ניתן להקליד שם גם בעברית וגם באנגלית"
+                        placement="right"
+                        componentsProps={{
+                          tooltip: {
+                            sx: {
+                              fontSize: "110%",
+                              background: theme.palette.primary.main,
+                              p: 2,
+                              ml: 2,
+                              mb: 1,
+                            },
                           },
-                          "& .MuiInputBase-root::placeholder": {
-                            color: "gray",
-                            fontFamily: "David",
-                            fontSize: "110%",
+                          arrow: {
+                            sx: {
+                              color: theme.palette.primary.main,
+                            },
                           },
                         }}
-                      />
+                        arrow
+                      >
+                        <TextField
+                          {...params}
+                          placeholder="סוג רכב"
+                          dir="rtl"
+                          variant="standard"
+                          sx={{
+                            fontFamily: "David",
+                            "& .MuiInputBase-input": {
+                              color: theme.palette.primary.main,
+                              fontFamily: "David",
+                              fontSize: "130%",
+                            },
+                            "& .MuiInputBase-root::placeholder": {
+                              color: "gray",
+                              fontFamily: "David",
+                              fontSize: "110%",
+                            },
+                          }}
+                        />
+                      </Tooltip>
                     )}
                   />
                 </>
@@ -621,26 +683,24 @@ export default function ClientTicket() {
         {currentStep.isNilvim ? (
           <>
             {state.nilvim.length > 0 ? (
-              <FormControl sx={{ minWidth: "10%", my: 2 }}>
+              <FormControl sx={{ minWidth: "8.5%", my: 2 }}>
                 <InputLabel
                   id="vehicleTypeLabel"
                   sx={{
                     fontFamily: "David",
                     color: theme.palette.primary.main,
                     fontSize: "130%",
-                    transform: "translateX(40%)",
+                    textAlign: "right",
+                    width: "80%",
                   }}
                 >
                   רשימת נלווים
                 </InputLabel>
                 <TextField
                   select
-                  variant="standard"
+                  variant="outlined"
                   value=""
                   sx={{ minWidth: "20%" }}
-                  InputLabelProps={{
-                    sx: { textAlign: "center" },
-                  }}
                 >
                   {state[currentStep.fieldName].map(
                     (nilve: INilve, index: number) => (
@@ -800,10 +860,33 @@ export default function ClientTicket() {
             mb: 5,
           }}
           onClick={nextStep}
-          disabled={!isValid(true)}
+          disabled={!isValid(true) || loading}
           variant="contained"
         >
-          {steps.indexOf(currentStep) === steps.length - 1 ? "הגש" : "המשך"}
+          {loading ? (
+            <Box sx={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+              <Typography
+                sx={{
+                  direction: "rtl",
+                  fontSize: "85%",
+                }}
+              >
+                מעלה בקשה...
+              </Typography>
+              <CircularProgress
+                sx={{
+                  color: theme.palette.secondary.main,
+                }}
+                size={20}
+                disableShrink
+                thickness={4}
+              />
+            </Box>
+          ) : (
+            <>
+              {steps.indexOf(currentStep) === steps.length - 1 ? "הגש" : "המשך"}
+            </>
+          )}
         </Button>
       </Box>
     </>

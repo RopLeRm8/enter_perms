@@ -36,6 +36,7 @@ export const initialState: IState = {
   nilvim: [],
   currentStep: 0,
   modalOpen: false,
+  searchValue: "",
 };
 
 export function formReducer(state: IState, action: IAction): IState {

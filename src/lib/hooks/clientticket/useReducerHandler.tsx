@@ -18,7 +18,7 @@ import useValidate from "./useValidate";
 import { INilve } from "@/types/ui";
 import { NotificationContext } from "@/contexts/NotificationContext";
 import { useStateValue } from "@/providers/StateProvider";
-import { useGetData } from "../api/useGetData";
+import useSaveTicket from "./useSaveTicket";
 
 const fieldLabels: { [key: string]: string } = {
   firstName: "שם פרטי",
@@ -32,12 +32,12 @@ const fieldLabels: { [key: string]: string } = {
   vehicleType: "סוג אוטו",
 };
 
-export default function useStepsHandler() {
+export default function useReducerHandler() {
   const [state, dispatch] = useStateValue();
   const notifContext = useContext(NotificationContext);
   const setNotif = notifContext.setMessage;
   const setIsError = notifContext.setIsError;
-  const { request } = useGetData();
+  const { saveTicket, loading } = useSaveTicket(state);
   const {
     checkId,
     checkOption,
@@ -49,10 +49,10 @@ export default function useStepsHandler() {
   } = useValidate();
 
   const nextStep = async () => {
-    request({
-      url: "api/getcars",
-      method: "GET",
-    });
+    if (isCurrentStep(steps.length - 1)) {
+      saveTicket();
+      return;
+    }
     if (!isValid()) return;
     dispatch({ type: "NEXT_STEP" });
     if (isCurrentStep(0) && !isTaasia()) {
@@ -126,9 +126,6 @@ export default function useStepsHandler() {
     fieldPath: string,
     value: string | Date | INilve[]
   ) => {
-    if (fieldPath === "nilvim") {
-      state.nilvim = [];
-    }
     dispatch({ type: "SET_FIELD_VALUE", payload: { fieldPath, value } });
   };
   const getFieldValue = (field: string) => {
@@ -356,5 +353,6 @@ export default function useStepsHandler() {
     isHayal,
     getSikum,
     handleInputChange,
+    loading,
   };
 }

@@ -1,6 +1,6 @@
 interface ICars {
-  english_cars: string;
-  hebrew_cars: string;
+  englishName: string;
+  hebrewName: string;
 }
 
 export type { ICars };

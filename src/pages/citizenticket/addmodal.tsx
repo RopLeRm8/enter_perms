@@ -1,5 +1,6 @@
-import useStepsHandler from "@/lib/hooks/clientticket/useStepsHandler";
+import useReducerHandler from "@/lib/hooks/clientticket/useReducerHandler";
 import useHandleModal from "@/lib/hooks/clientticket/useHandleModal";
+import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import { IAddModal, INilve } from "@/types/ui";
 import {
   Box,
@@ -14,11 +15,13 @@ import {
   Select,
   FormControl,
   InputLabel,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import { useState } from "react";
 
 export default function AddModal({ open, setOpen }: IAddModal) {
-  const { state, steps, isHayal } = useStepsHandler();
+  const { state, steps, isHayal } = useReducerHandler();
   const theme = useTheme();
   const [newNilve, setNewNilve] = useState<INilve>({
     humanType: "",
@@ -28,7 +31,7 @@ export default function AddModal({ open, setOpen }: IAddModal) {
     lastName: "",
   });
 
-  const { handleNewNilveChange, createNilve } = useHandleModal(
+  const { handleNewNilveChange, createNilve, removeNilve } = useHandleModal(
     newNilve,
     setNewNilve
   );
@@ -289,37 +292,68 @@ export default function AddModal({ open, setOpen }: IAddModal) {
                 display: "flex",
                 flexDirection: "column",
                 gap: "1rem",
-                maxWidth: "35%",
+                maxWidth: "50%",
               }}
             >
               {state.nilvim.map((nilve: INilve, index: number) => (
-                <Paper
-                  key={index}
-                  elevation={5}
+                <Box
                   sx={{
-                    p: 2,
                     display: "flex",
-                    justifyContent: "end",
-                    alignItems: "center",
-                    background: theme.palette.secondary.main,
+                    flexDirection: "row-reverse",
+                    gap: "1rem",
                   }}
+                  key={index}
                 >
-                  <Box sx={{ color: "white", display: "flex", gap: "0.3rem" }}>
-                    <Typography
-                      sx={{
-                        fontSize: "120%",
-                        color: "white",
-                      }}
-                    >{`${nilve?.firstName} ${nilve?.lastName}`}</Typography>
-                    {
-                      steps[0].options[
-                        steps[0].options.findIndex(
-                          (opt) => opt.optionname === nilve?.humanType
-                        )
-                      ]?.icon
-                    }
-                  </Box>
-                </Paper>
+                  <Tooltip
+                    title="למחוק נלווה זה"
+                    placement="right"
+                    componentsProps={{
+                      tooltip: {
+                        sx: {
+                          fontSize: "110%",
+                          background: theme.palette.error.main,
+                          ml: 1,
+                        },
+                      },
+                    }}
+                  >
+                    <IconButton
+                      onClick={() => removeNilve(nilve)}
+                      size="small"
+                      color="error"
+                    >
+                      <PersonRemoveIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Paper
+                    elevation={5}
+                    sx={{
+                      p: 2,
+                      display: "flex",
+                      justifyContent: "end",
+                      alignItems: "center",
+                      background: theme.palette.secondary.main,
+                    }}
+                  >
+                    <Box
+                      sx={{ color: "white", display: "flex", gap: "0.3rem" }}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize: "120%",
+                          color: "white",
+                        }}
+                      >{`${nilve?.firstName} ${nilve?.lastName}`}</Typography>
+                      {
+                        steps[0].options[
+                          steps[0].options.findIndex(
+                            (opt) => opt.optionname === nilve?.humanType
+                          )
+                        ]?.icon
+                      }
+                    </Box>
+                  </Paper>
+                </Box>
               ))}
             </Box>
           </Box>
