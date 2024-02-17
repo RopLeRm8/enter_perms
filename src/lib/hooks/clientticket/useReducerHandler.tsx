@@ -1,5 +1,5 @@
 import { ISikumEntry, ISikumValue, IStep } from "@/types/hooks";
-import { useContext } from "react";
+import { useCallback, useContext } from "react";
 import EmojiPeopleIcon from "@mui/icons-material/EmojiPeople";
 import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
@@ -122,12 +122,12 @@ export default function useReducerHandler() {
     const val = value ?? state.requestFor;
     return steps[0].options.findIndex((opt) => opt.optionname === val) < 3;
   };
-  const setFieldValue = (
-    fieldPath: string,
-    value: string | Date | INilve[]
-  ) => {
-    dispatch({ type: "SET_FIELD_VALUE", payload: { fieldPath, value } });
-  };
+  const setFieldValue = useCallback(
+    (fieldPath: string, value: string | Date | INilve[]) => {
+      dispatch({ type: "SET_FIELD_VALUE", payload: { fieldPath, value } });
+    },
+    [dispatch]
+  );
   const getFieldValue = (field: string) => {
     return state[field];
   };
@@ -330,17 +330,16 @@ export default function useReducerHandler() {
     return sikum;
   };
 
-  const handleInputChange = (
-    fieldPath: string,
-    value: string,
-    onlynums?: boolean
-  ): void => {
-    if (!onlynums) {
-      setFieldValue(fieldPath, value);
-    } else if (onlynums && /^\d*$/.test(value)) {
-      return setFieldValue(fieldPath, value);
-    }
-  };
+  const handleInputChange = useCallback(
+    (fieldPath: string, value: string, onlynums?: boolean): void => {
+      if (!onlynums) {
+        setFieldValue(fieldPath, value);
+      } else if (onlynums && /^\d*$/.test(value)) {
+        return setFieldValue(fieldPath, value);
+      }
+    },
+    [setFieldValue]
+  );
 
   return {
     state,

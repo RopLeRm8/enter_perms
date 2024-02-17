@@ -10,7 +10,7 @@ export const useSendApiReq = <T>(): IUseApiResponse<T> => {
   const notifContext = useContext(NotificationContext);
   const setNotif = notifContext.setMessage;
   const setIsError = notifContext.setIsError;
-  const { mutate } = useMutation<T>(
+  const { mutate } = useMutation(
     async (config: AxiosRequestConfig) => {
       setLoading(true);
       const response = await axios({
