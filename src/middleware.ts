@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { NextMiddleware } from "next/server";
-
-interface RequestRecord {
-  count: number;
-  startTime: number;
-}
+import { IRequestRecord } from "./types/api";
 
 const windowMs = 10 * 60 * 1000;
-const max = 500;
-const requests = new Map<string, RequestRecord>();
+const max = 2000;
+const requests = new Map<string, IRequestRecord>();
 
 const rateLimit: NextMiddleware = (req: NextRequest) => {
   const ip = req.ip ?? "unknown";

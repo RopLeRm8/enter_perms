@@ -10,6 +10,7 @@ export default async function getsoldier(
     const soldier = await Soldier.findOne({
       where: { id: soldierId.soldierId },
     });
+    console.log(soldier?.dataValues);
     res.status(200).json({ data: soldier?.dataValues });
   } catch (err) {
     res.status(503).json({ error: "בעיה בהתחברות לשרת בסיס נתונים" });

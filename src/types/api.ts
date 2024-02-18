@@ -17,4 +17,8 @@ type ISaveTicketData = {
   nilvim: IStateTransformed[];
 };
 
-export type { ICars, ISoldier, ISaveTicketData };
+interface IRequestRecord {
+  count: number;
+  startTime: number;
+}
+export type { ICars, ISoldier, ISaveTicketData, IRequestRecord };

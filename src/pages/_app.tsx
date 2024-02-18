@@ -16,6 +16,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <NotificationProvider>
             <Head>
               <link rel="icon" href="/cyber.png" />
+              <title>מערכת אישורי כניסה</title>
             </Head>
             <Component {...pageProps} />
           </NotificationProvider>
