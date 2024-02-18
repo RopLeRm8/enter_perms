@@ -92,6 +92,25 @@ interface IUseApiResponse<T> {
   loading: boolean;
   request: (config: AxiosRequestConfig) => void;
 }
+type IStateToDBMap = { [K in keyof IState]?: keyof IStateTransformed };
+
+interface IStateTransformed {
+  IDPerson: string;
+  HumenType: string;
+  IndustryType: string;
+  FirstName: string;
+  LastName: string;
+  EntryReason: string;
+  ID_Guarantor: string;
+  ClassifiedType: string;
+  StartDate: string;
+  EndDate: string;
+  WorkArea: string;
+  HaveCar: string | boolean;
+  CarNumber: string;
+  CarColor: string;
+  CarManufacture: string;
+}
 
 export type {
   IStep,
@@ -103,4 +122,6 @@ export type {
   ISikumEntry,
   IMessageResponse,
   IUseApiResponse,
+  IStateToDBMap,
+  IStateTransformed,
 };

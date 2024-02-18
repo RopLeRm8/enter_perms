@@ -1,6 +1,7 @@
 import { NotificationContext } from "@/contexts/NotificationContext";
 import { IMessageResponse, IUseApiResponse } from "@/types/hooks";
 import axios, { AxiosRequestConfig } from "axios";
+import Router from "next/router";
 import { useContext, useState } from "react";
 import { useMutation } from "react-query";
 
@@ -13,6 +14,7 @@ export const useSendApiReq = <T>(): IUseApiResponse<T> => {
   const { mutate } = useMutation(
     async (config: AxiosRequestConfig) => {
       setLoading(true);
+      setData(undefined);
       const response = await axios({
         ...config,
         url: config.url,
@@ -21,13 +23,19 @@ export const useSendApiReq = <T>(): IUseApiResponse<T> => {
     },
     {
       onSuccess: (msg: T | undefined) => {
-        setData((msg as IMessageResponse<T>).data ?? msg);
+        setData((msg as IMessageResponse<T>).data);
       },
       onError: (err: Error) => {
-        if (axios.isAxiosError(err) && err.response?.data.error) {
+        if (!axios.isAxiosError(err)) return;
+        if (err.response) {
           setNotif(`שגיאה: ${err.response.data.error}`);
-        } else {
-          setNotif("בעיה בלתי צפויה קרתה");
+          Router.push({
+            pathname: "/error",
+            query: {
+              status: err.response.status,
+              text: err.response.data.error,
+            },
+          });
         }
         setIsError(true);
       },

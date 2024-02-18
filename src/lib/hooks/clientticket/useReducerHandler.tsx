@@ -1,5 +1,5 @@
 import { ISikumEntry, ISikumValue, IStep } from "@/types/hooks";
-import { useCallback, useContext } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import EmojiPeopleIcon from "@mui/icons-material/EmojiPeople";
 import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
@@ -20,7 +20,7 @@ import { NotificationContext } from "@/contexts/NotificationContext";
 import { useStateValue } from "@/providers/StateProvider";
 import useSaveTicket from "./useSaveTicket";
 
-const fieldLabels: { [key: string]: string } = {
+const FIELDLABELS: { [key: string]: string } = {
   firstName: "שם פרטי",
   lastName: "שם משפחה",
   misparIshi: "תעודה מזהה",
@@ -37,7 +37,7 @@ export default function useReducerHandler() {
   const notifContext = useContext(NotificationContext);
   const setNotif = notifContext.setMessage;
   const setIsError = notifContext.setIsError;
-  const { saveTicket, loading } = useSaveTicket(state);
+  const { saveTicket, loading, data } = useSaveTicket(state);
   const {
     checkId,
     checkOption,
@@ -50,7 +50,11 @@ export default function useReducerHandler() {
 
   const nextStep = async () => {
     if (isCurrentStep(steps.length - 1)) {
-      saveTicket();
+      saveTicket().then(() => {
+        setNotif("הבקשה נשלחה בהצלחה!");
+        setIsError(false);
+        resetReducer();
+      });
       return;
     }
     if (!isValid()) return;
@@ -307,8 +311,8 @@ export default function useReducerHandler() {
       } else if (typeof value === "object" && value !== null) {
         const labeledObject = Object.entries(value).reduce(
           (acc, [subKey, subValue]) => {
-            const label: keyof typeof fieldLabels =
-              fieldLabels[subKey] || subKey;
+            const label: keyof typeof FIELDLABELS =
+              FIELDLABELS[subKey] || subKey;
             if (subValue !== "") {
               acc[label as keyof ISikumValue] = subValue;
             }
@@ -340,6 +344,10 @@ export default function useReducerHandler() {
     },
     [setFieldValue]
   );
+
+  const resetReducer = useCallback(() => {
+    dispatch({ type: "RESET" });
+  }, []);
 
   return {
     state,

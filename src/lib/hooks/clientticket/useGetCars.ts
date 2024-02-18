@@ -6,7 +6,7 @@ export default function useGetCars() {
   const { request, data } = useSendApiReq<ICars[]>();
   const getCars = useCallback(async () => {
     await request({
-      url: "api/getcars",
+      url: "api/controllers/getcars",
       method: "GET",
     });
   }, []);

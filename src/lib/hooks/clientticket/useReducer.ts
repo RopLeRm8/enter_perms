@@ -4,9 +4,9 @@ import { IAction, IState } from "@/types/hooks";
 const SET_FIELD_VALUE = "SET_FIELD_VALUE";
 const NEXT_STEP = "NEXT_STEP";
 const PREVIOUS_STEP = "PREVIOUS_STEP";
-const OPEN_MODAL = "OPEN_MODAL";
+const RESET = "RESET";
 
-export const initialState: IState = {
+export const INITIALSTATE: IState = {
   idNumber: "",
   fullName: {
     firstName: "",
@@ -71,11 +71,8 @@ export function formReducer(state: IState, action: IAction): IState {
         ...state,
         currentStep: state.currentStep > 0 ? state.currentStep - 1 : 0,
       };
-    case OPEN_MODAL:
-      return {
-        ...state,
-        modalOpen: !state.modalOpen,
-      };
+    case RESET:
+      return INITIALSTATE;
     default:
       return state;
   }

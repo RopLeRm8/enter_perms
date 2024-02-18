@@ -27,6 +27,7 @@ import { INilve } from "@/types/ui";
 import usePassive from "@/lib/hooks/clientticket/usePassive";
 import useGetCars from "@/lib/hooks/clientticket/useGetCars";
 import { ICars } from "@/types/api";
+import useGetSoldier from "@/lib/hooks/clientticket/useGetSoldier";
 
 export default function ClientTicket() {
   const {
@@ -48,6 +49,7 @@ export default function ClientTicket() {
     useHandleDates();
   const currentStep = steps[state.currentStep];
   const { data: cars } = useGetCars();
+  const { getSoldier, loading: soldierLoading } = useGetSoldier();
   const theme = useTheme();
   usePassive(open);
 
@@ -214,9 +216,9 @@ export default function ClientTicket() {
                 multiline
                 minRows={4}
                 value={state[currentStep.fieldName]}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  handleInputChange(currentStep.fieldName, e.target.value)
-                }
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  handleInputChange(currentStep.fieldName, e.target.value);
+                }}
               />
             ) : !currentStep.twoFields ? (
               currentStep.isRehev ? (
@@ -411,14 +413,16 @@ export default function ClientTicket() {
                       maxLength: 7,
                     }}
                     dir="rtl"
-                    value={state[currentStep.fieldName].misparIshi}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    value={state.escortDetails.misparIshi}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       handleInputChange(
                         "escortDetails.misparIshi",
                         e.target.value,
                         true
-                      )
-                    }
+                      );
+                      if (state.escortDetails.misparIshi?.length === 6)
+                        getSoldier(e.target.value);
+                    }}
                   />
                   <TextField
                     variant="standard"
@@ -440,7 +444,8 @@ export default function ClientTicket() {
                       maxLength: 10,
                     }}
                     dir="rtl"
-                    value={state[currentStep.fieldName].firstName}
+                    disabled={soldierLoading}
+                    value={state.escortDetails.firstName}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       handleInputChange(
                         "escortDetails.firstName",
@@ -468,7 +473,8 @@ export default function ClientTicket() {
                       maxLength: 10,
                     }}
                     dir="rtl"
-                    value={state[currentStep.fieldName].lastName}
+                    disabled={soldierLoading}
+                    value={state.escortDetails.lastName}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       handleInputChange(
                         "escortDetails.lastName",
@@ -496,7 +502,8 @@ export default function ClientTicket() {
                       maxLength: 10,
                     }}
                     dir="rtl"
-                    value={state[currentStep.fieldName].phone}
+                    disabled={soldierLoading}
+                    value={state.escortDetails.phone}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       handleInputChange(
                         "escortDetails.phone",
@@ -650,8 +657,8 @@ export default function ClientTicket() {
                       minWidth: "20%",
                       width: "12rem",
                       borderRadius: "100px",
-                      height: "22vh",
-                      maxHeight: "22vh",
+                      height: "12rem",
+                      maxHeight: "12rem",
                     }}
                     onClick={() => {
                       handleInputChange(currentStep.fieldName, opt.optionname);

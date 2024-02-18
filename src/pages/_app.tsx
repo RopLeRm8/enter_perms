@@ -1,4 +1,4 @@
-import { formReducer, initialState } from "@/lib/hooks/clientticket/useReducer";
+import { formReducer, INITIALSTATE } from "@/lib/hooks/clientticket/useReducer";
 import { NotificationProvider } from "@/providers/NotificationProvider";
 import { StateProvider } from "@/providers/StateProvider";
 import { theme } from "@/providers/ThemeProvider";
@@ -10,7 +10,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 export default function App({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient();
   return (
-    <StateProvider initialState={initialState} reducer={formReducer}>
+    <StateProvider initialState={INITIALSTATE} reducer={formReducer}>
       <ThemeProvider theme={theme}>
         <QueryClientProvider client={queryClient}>
           <NotificationProvider>

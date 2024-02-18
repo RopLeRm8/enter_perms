@@ -1,8 +1,11 @@
-import { Request, Response } from "express";
-import Car from "./models/cars";
+import { NextApiRequest, NextApiResponse } from "next";
+import Car from "../models/cars";
 import { ICars } from "@/types/api";
 
-export default async function getcars(req: Request, res: Response) {
+export default async function getcars(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   try {
     const cars = await Car.findAll({
       attributes: ["english_cars", "hebrew_cars"],
