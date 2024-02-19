@@ -28,6 +28,8 @@ import usePassive from "@/lib/hooks/clientticket/usePassive";
 import useGetCars from "@/lib/hooks/clientticket/useGetCars";
 import { ICars } from "@/types/api";
 import useGetSoldier from "@/lib/hooks/clientticket/useGetSoldier";
+import useGetPrevTicket from "@/lib/hooks/clientticket/useGetPrevTicket";
+import SuggestModal from "./suggestmodal";
 
 export default function ClientTicket() {
   const {
@@ -50,12 +52,14 @@ export default function ClientTicket() {
   const currentStep = steps[state.currentStep];
   const { data: cars } = useGetCars();
   const { getSoldier, loading: soldierLoading } = useGetSoldier();
+  const { getPreviousTicket, data: previousTicket } = useGetPrevTicket();
   const theme = useTheme();
   usePassive(open);
 
   return (
     <>
       <AddModal open={open} setOpen={setOpen} />
+      <SuggestModal ticketData={previousTicket} />
       <Box
         sx={{
           display: "flex",
@@ -538,13 +542,20 @@ export default function ClientTicket() {
                   }}
                   dir="rtl"
                   value={state[currentStep.fieldName]}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     handleInputChange(
                       currentStep.fieldName,
                       e.target.value,
                       currentStep.isTz
+                    );
+                    if (
+                      !currentStep.isTz ||
+                      e.target.value.length < (isHayal() ? 7 : 9)
                     )
-                  }
+                      return;
+                    setFieldValue("suggestionModalOpen", true);
+                    getPreviousTicket(e.target.value, isHayal());
+                  }}
                 />
               ) : null
             ) : null}

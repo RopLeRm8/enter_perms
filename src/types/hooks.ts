@@ -7,7 +7,7 @@ interface IOptions {
 }
 interface IAction {
   type: string;
-  payload?: { fieldPath: string; value: string | INilve[] | Date };
+  payload?: { fieldPath: string; value: string | INilve[] | Date | boolean };
 }
 interface IStep {
   name: string;
@@ -58,6 +58,7 @@ interface IState {
   currentStep: number;
   modalOpen: boolean;
   searchValue: string;
+  suggestionModalOpen: boolean;
 }
 
 interface IUseGetSteps {
@@ -91,6 +92,7 @@ interface IUseApiResponse<T> {
   setData: React.Dispatch<React.SetStateAction<T | undefined>>;
   loading: boolean;
   request: (config: AxiosRequestConfig) => void;
+  status: "loading" | "error" | "idle" | "success";
 }
 type IStateToDBMap = { [K in keyof IState]?: keyof IStateTransformed };
 

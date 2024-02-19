@@ -1,24 +1,8 @@
 import { IState, IStateTransformed, IStateToDBMap } from "@/types/hooks";
 import { useSendApiReq } from "../api/useSendApiReq";
 import { INilve } from "@/types/ui";
-
-const STATETODB: IStateToDBMap = {
-  idNumber: "IDPerson",
-  requestFor: "HumenType",
-  industryWorker: "IndustryType",
-  "fullName.firstName": "FirstName",
-  "fullName.lastName": "LastName",
-  entryReason: "EntryReason",
-  "escortDetails.misparIshi": "ID_Guarantor",
-  classificationLevel: "ClassifiedType",
-  "approvalPeriod.startDate": "StartDate",
-  "approvalPeriod.endDate": "EndDate",
-  workArea: "WorkArea",
-  vehicleEntryApproval: "HaveCar",
-  "vehicleDetails.vehicleNum": "CarNumber",
-  "vehicleDetails.vehicleCol": "CarColor",
-  "vehicleDetails.vehicleType": "CarManufacture",
-};
+import { useMemo } from "react";
+import { STATETODB } from "@/config/statetodb";
 
 function transformStateWithNestedPaths(
   state: IState,
@@ -31,7 +15,7 @@ function transformStateWithNestedPaths(
       .reduce((acc: any, part) => acc && acc[part], state);
     if (valueAtPath !== undefined) {
       if (newValue === "HaveCar") {
-        result[newValue] = valueAtPath === "לא" ? "false" : "true";
+        result[newValue] = valueAtPath === "לא" ? false : true;
       } else {
         result[newValue as keyof IStateTransformed] = valueAtPath;
       }
@@ -66,10 +50,16 @@ function saveNilvim(
 }
 
 export default function useSaveTicket(state: IState) {
-  const { data, request, loading } = useSendApiReq<string>();
-  const dbData = transformStateWithNestedPaths({ ...state }, STATETODB);
-  const nilvim = saveNilvim({ ...state }, dbData);
-  const saveTicket = () => {
+  const { request, loading, data } = useSendApiReq<string>();
+  const dbData = useMemo(
+    () => transformStateWithNestedPaths({ ...state }, STATETODB),
+    [state]
+  );
+  const nilvim = useMemo(
+    () => saveNilvim({ ...state }, dbData),
+    [state, dbData]
+  );
+  const saveTicket = (): Promise<string | undefined> => {
     return new Promise(async (resolve, reject) => {
       try {
         await request({
@@ -80,9 +70,9 @@ export default function useSaveTicket(state: IState) {
             nilvim,
           },
         });
-        resolve("ok");
+        resolve(data);
       } catch (err) {
-        reject("bad");
+        reject(err);
       }
     });
   };

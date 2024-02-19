@@ -8,7 +8,7 @@ export default function notFound() {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        pt: 60,
+        pt: 45,
       }}
     >
       <Typography

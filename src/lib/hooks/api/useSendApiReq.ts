@@ -11,7 +11,7 @@ export const useSendApiReq = <T>(): IUseApiResponse<T> => {
   const notifContext = useContext(NotificationContext);
   const setNotif = notifContext.setMessage;
   const setIsError = notifContext.setIsError;
-  const { mutate } = useMutation(
+  const { mutate, status } = useMutation(
     async (config: AxiosRequestConfig) => {
       setLoading(true);
       setData(undefined);
@@ -22,10 +22,10 @@ export const useSendApiReq = <T>(): IUseApiResponse<T> => {
       return response.data;
     },
     {
-      onSuccess: (msg: T | undefined) => {
+      onSuccess: (msg: T | undefined): void => {
         setData((msg as IMessageResponse<T>).data);
       },
-      onError: (err: Error) => {
+      onError: (err: Error): void => {
         if (!axios.isAxiosError(err)) return;
         if (err.response) {
           setNotif(`שגיאה: ${err.response.data.error}`);
@@ -53,5 +53,6 @@ export const useSendApiReq = <T>(): IUseApiResponse<T> => {
     setData: setData,
     loading: loading,
     request,
+    status: status,
   };
 };

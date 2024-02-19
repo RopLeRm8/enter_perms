@@ -37,6 +37,7 @@ export const INITIALSTATE: IState = {
   currentStep: 0,
   modalOpen: false,
   searchValue: "",
+  suggestionModalOpen: true,
 };
 
 export function formReducer(state: IState, action: IAction): IState {

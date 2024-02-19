@@ -37,7 +37,7 @@ export default function useReducerHandler() {
   const notifContext = useContext(NotificationContext);
   const setNotif = notifContext.setMessage;
   const setIsError = notifContext.setIsError;
-  const { saveTicket, loading, data } = useSaveTicket(state);
+  const { saveTicket, loading, data: saveticketData } = useSaveTicket(state);
   const {
     checkId,
     checkOption,
@@ -50,11 +50,7 @@ export default function useReducerHandler() {
 
   const nextStep = async () => {
     if (isCurrentStep(steps.length - 1)) {
-      saveTicket().then(() => {
-        setNotif("הבקשה נשלחה בהצלחה!");
-        setIsError(false);
-        resetReducer();
-      });
+      saveTicket();
       return;
     }
     if (!isValid()) return;
@@ -127,7 +123,7 @@ export default function useReducerHandler() {
     return steps[0].options.findIndex((opt) => opt.optionname === val) < 3;
   };
   const setFieldValue = useCallback(
-    (fieldPath: string, value: string | Date | INilve[]) => {
+    (fieldPath: string, value: string | Date | INilve[] | boolean) => {
       dispatch({ type: "SET_FIELD_VALUE", payload: { fieldPath, value } });
     },
     [dispatch]
@@ -348,6 +344,14 @@ export default function useReducerHandler() {
   const resetReducer = useCallback(() => {
     dispatch({ type: "RESET" });
   }, []);
+
+  useEffect(() => {
+    if (!saveticketData) return;
+    setNotif("הבקשה נשלחה בהצלחה!");
+    setIsError(false);
+    resetReducer();
+    setFieldValue("suggestionModalOpen", false);
+  }, [saveticketData, setNotif, setIsError, resetReducer]);
 
   return {
     state,

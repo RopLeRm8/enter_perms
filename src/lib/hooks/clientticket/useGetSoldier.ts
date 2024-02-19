@@ -6,15 +6,18 @@ import useReducerHandler from "./useReducerHandler";
 export default function useGetSoldier() {
   const { request, data, loading } = useSendApiReq<ISoldier>();
   const { setFieldValue } = useReducerHandler();
-  const getSoldier = useCallback(async (soldierId: string) => {
-    await request({
-      url: "api/controllers/getsoldier",
-      method: "POST",
-      data: {
-        soldierId,
-      },
-    });
-  }, []);
+  const getSoldier = useCallback(
+    async (soldierId: string) => {
+      await request({
+        url: "api/controllers/getsoldier",
+        method: "POST",
+        data: {
+          soldierId,
+        },
+      });
+    },
+    [request]
+  );
 
   useEffect(() => {
     if (!data || Object.keys(data).length === 0) return;
