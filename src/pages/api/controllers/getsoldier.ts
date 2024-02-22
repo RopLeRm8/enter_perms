@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Soldier from "../models/soldiers";
-
+import os from "os";
 export default async function getsoldier(
   req: NextApiRequest,
   res: NextApiResponse

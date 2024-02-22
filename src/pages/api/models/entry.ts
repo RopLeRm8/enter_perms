@@ -73,6 +73,10 @@ Entry.init(
       type: DataTypes.INTEGER,
       allowNull: true,
     },
+    CreatorUsername: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   },
   {
     sequelize,

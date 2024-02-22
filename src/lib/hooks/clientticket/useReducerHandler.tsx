@@ -1,4 +1,9 @@
-import { ISikumEntry, ISikumValue, IStep } from "@/types/hooks";
+import {
+  ISikumEntry,
+  ISikumValue,
+  IStateTransformed,
+  IStep,
+} from "@/types/hooks";
 import { useCallback, useContext, useEffect } from "react";
 import EmojiPeopleIcon from "@mui/icons-material/EmojiPeople";
 import MapsHomeWorkIcon from "@mui/icons-material/MapsHomeWork";
@@ -123,7 +128,10 @@ export default function useReducerHandler() {
     return steps[0].options.findIndex((opt) => opt.optionname === val) < 3;
   };
   const setFieldValue = useCallback(
-    (fieldPath: string, value: string | Date | INilve[] | boolean) => {
+    (
+      fieldPath: string,
+      value: string | Date | INilve[] | boolean | IStateTransformed
+    ) => {
       dispatch({ type: "SET_FIELD_VALUE", payload: { fieldPath, value } });
     },
     [dispatch]
@@ -140,11 +148,11 @@ export default function useReducerHandler() {
       validateFn: checkOption,
       options: [
         {
-          optionname: "חייל סדיר",
+          optionname: 'אע"צ',
           icon: <MilitaryTechIcon />,
         },
         {
-          optionname: "איש קבע",
+          optionname: "קצין/נגד",
           icon: <PlayLessonIcon />,
         },
         {

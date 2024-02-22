@@ -1,8 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Entry from "../models/entry";
 import { ISaveTicketData } from "@/types/api";
+import os from "os";
 
-const DEFAULTAPPROVE = "ממתין לאישור";
+const DEFAULTAPPROVE = "בטיפול";
 
 export default async function saveticket(
   req: NextApiRequest,
@@ -10,9 +11,19 @@ export default async function saveticket(
 ) {
   try {
     const data: ISaveTicketData = req.body;
-    await Entry.create({ ...data.dbData, ApproveStatus: DEFAULTAPPROVE });
+    const osUserName = os.userInfo().username;
+
+    await Entry.create({
+      ...data.dbData,
+      ApproveStatus: DEFAULTAPPROVE,
+      CreatorUsername: osUserName,
+    });
     data.nilvim.map(async (nilve) => {
-      await Entry.create({ ...nilve, ApproveStatus: DEFAULTAPPROVE });
+      await Entry.create({
+        ...nilve,
+        ApproveStatus: DEFAULTAPPROVE,
+        CreatorUsername: osUserName,
+      });
     });
     res.status(200).json({ data: "good" });
   } catch (err) {

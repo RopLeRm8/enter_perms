@@ -7,7 +7,10 @@ interface IOptions {
 }
 interface IAction {
   type: string;
-  payload?: { fieldPath: string; value: string | INilve[] | Date | boolean };
+  payload?: {
+    fieldPath: string;
+    value: string | INilve[] | Date | boolean | IStateTransformed;
+  };
 }
 interface IStep {
   name: string;
@@ -26,6 +29,15 @@ interface IStep {
   validateFn?: (input: string, title?: string) => boolean;
 }
 
+interface IViewTickets {
+  inputValue: string | null;
+  ticketModalOpen: boolean;
+  openedTicket: Partial<IStateTransformed>;
+  entryCode: string;
+  acceptTicket: boolean;
+  showPag: boolean;
+  menuEl: HTMLButtonElement | null;
+}
 interface IState {
   [key: string]: any;
   idNumber: string;
@@ -59,6 +71,7 @@ interface IState {
   modalOpen: boolean;
   searchValue: string;
   suggestionModalOpen: boolean;
+  viewTickets: IViewTickets;
 }
 
 interface IUseGetSteps {
@@ -112,10 +125,15 @@ interface IStateTransformed {
   CarNumber: string;
   CarColor: string;
   CarManufacture: string;
+  ApproveStatus: "בטיפול" | "אושר" | "לא אושר";
+  ApproveCode: string;
+  createdAt: Date;
+  CreatorUsername: string;
 }
 
 export type {
   IStep,
+  IViewTickets,
   IState,
   ActionType,
   IUseGetSteps,

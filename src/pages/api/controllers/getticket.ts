@@ -8,12 +8,10 @@ export default async function GetTicket(
   try {
     const { idNumber, isHayal }: { idNumber: string; isHayal: boolean } =
       req.body;
-    console.log(idNumber, isHayal);
     if (idNumber.length < (isHayal ? 7 : 9)) return;
     const previousTicket = await Entry.findOne({
       where: { IDPerson: idNumber },
     });
-    console.log(previousTicket);
     const {
       id,
       createdAt,
@@ -21,6 +19,7 @@ export default async function GetTicket(
       EndDate,
       ApproveStatus,
       ApproveCode,
+      CreatorUsername,
       ...usefulShit
     } = previousTicket?.dataValues ?? {};
     res.status(200).json({ data: usefulShit });

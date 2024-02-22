@@ -38,6 +38,15 @@ export const INITIALSTATE: IState = {
   modalOpen: false,
   searchValue: "",
   suggestionModalOpen: true,
+  viewTickets: {
+    inputValue: null,
+    ticketModalOpen: false,
+    openedTicket: {},
+    entryCode: "",
+    acceptTicket: true,
+    showPag: false,
+    menuEl: null,
+  },
 };
 
 export function formReducer(state: IState, action: IAction): IState {

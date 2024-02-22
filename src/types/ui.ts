@@ -1,3 +1,6 @@
+import React from "react";
+import { IStateTransformed } from "./hooks";
+
 interface IAddModal {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -12,4 +15,22 @@ interface INilve {
 
 type IValidatorFunction = (input: string, title?: string) => boolean;
 
-export type { IAddModal, INilve, IValidatorFunction };
+interface ITicketsView {
+  tickets: IStateTransformed[];
+  error: string;
+}
+
+interface ITicketModal {
+  ticket: Partial<IStateTransformed> | undefined;
+  open: boolean;
+  entryCode: string | null;
+  tickets: Record<string, IStateTransformed[]>;
+}
+
+export type {
+  IAddModal,
+  INilve,
+  IValidatorFunction,
+  ITicketsView,
+  ITicketModal,
+};

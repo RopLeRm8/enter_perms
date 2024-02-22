@@ -6,6 +6,9 @@ Project Description
 
 ### Todo
 
+- [ ] finish api (loading and etc)  
+- [ ] make sections collapse  
+- [ ] pag tokef  
 - [ ] Sikum ba sof  
 
 ### In Progress

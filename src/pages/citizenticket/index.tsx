@@ -654,9 +654,12 @@ export default function ClientTicket() {
                   sx={{
                     ".MuiBadge-badge": {
                       top: "20%",
-                      right: "10%",
+                      right: "13%",
                       border: `2px solid ${theme.palette.background.paper}`,
                       padding: "0 4px",
+                      width: "2rem",
+                      height: "2rem",
+                      borderRadius: "30px",
                     },
                   }}
                   invisible={state[currentStep.fieldName] !== opt.optionname}
