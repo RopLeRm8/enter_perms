@@ -24,7 +24,7 @@ interface ITicketModal {
   ticket: Partial<IStateTransformed> | undefined;
   open: boolean;
   entryCode: string | null;
-  tickets: Record<string, IStateTransformed[]>;
+  tickets: Record<string, IStateTransformed[]> | null;
 }
 
 export type {

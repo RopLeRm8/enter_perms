@@ -9,7 +9,16 @@ interface IAction {
   type: string;
   payload?: {
     fieldPath: string;
-    value: string | INilve[] | Date | boolean | IStateTransformed;
+    value:
+      | string
+      | Date
+      | INilve[]
+      | boolean
+      | IStateTransformed
+      | Record<string, IStateTransformed[]>
+      | Record<string, IStateTransformed[]>
+      | null
+      | HTMLButtonElement;
   };
 }
 interface IStep {
@@ -37,6 +46,7 @@ interface IViewTickets {
   acceptTicket: boolean;
   showPag: boolean;
   menuEl: HTMLButtonElement | null;
+  groupedTickets: Record<string, IStateTransformed[]> | null;
 }
 interface IState {
   [key: string]: any;

@@ -1,6 +1,6 @@
 import { INilve, IValidatorFunction } from "@/types/ui";
 import useValidate from "./useValidate";
-import useReducerHandler from "@/lib/hooks/clientticket/useReducerHandler";
+import useReducerHandler from "@/lib/global/useReducerHandler";
 import { NotificationContext } from "../../../contexts/NotificationContext";
 import { useContext } from "react";
 

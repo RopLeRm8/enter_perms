@@ -1,4 +1,4 @@
-import useReducerHandler from "@/lib/hooks/clientticket/useReducerHandler";
+import useReducerHandler from "@/lib/global/useReducerHandler";
 import useExtraTicketProps from "@/lib/hooks/viewticket/useExtraTicketProps";
 import useModalUtils from "@/lib/hooks/viewticket/useModalUtils";
 import useUpdateStatus from "@/lib/hooks/viewticket/useUpdateStatus";
@@ -101,74 +101,74 @@ export default function TicketModal({
           "&:after": { borderColor: theme.palette.primary.main },
           background: theme.palette.primary.main,
           my: 5,
+          visibility:
+            ticket?.ApproveStatus === "בטיפול" && !isPag(tickets ?? {}, ticket)
+              ? "visible"
+              : "hidden",
         }}
       />
-      {ticket?.ApproveStatus === "בטיפול" && !isPag(tickets, ticket) ? (
-        <Box sx={{ display: "flex", justifyContent: "space-around" }}>
-          <Badge
-            badgeContent="✓"
-            color="primary"
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            sx={{
-              ".MuiBadge-badge": {
-                top: "20%",
-                right: "5%",
-                border: `2px solid ${theme.palette.background.paper}`,
-                padding: "0 4px",
-                width: "2rem",
-                height: "2rem",
-                borderRadius: "30px",
-              },
-            }}
-            invisible={!state.viewTickets.acceptTicket}
-          >
-            <Button
-              color="secondary"
-              variant="contained"
-              sx={{ px: 8, fontSize: "150%" }}
-              onClick={() => setFieldValue("viewTickets.acceptTicket", true)}
-            >
-              אשר
-            </Button>
-          </Badge>
-          <Badge
-            badgeContent="✓"
-            color="primary"
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            sx={{
-              ".MuiBadge-badge": {
-                top: "20%",
-                right: "5%",
-                border: `2px solid ${theme.palette.background.paper}`,
-                padding: "0 4px",
-                width: "2rem",
-                height: "2rem",
-                borderRadius: "30px",
-              },
-            }}
-            invisible={state.viewTickets.acceptTicket}
-          >
-            <Button
-              color="error"
-              variant="contained"
-              sx={{ px: 8, fontSize: "150%" }}
-              onClick={() => setFieldValue("viewTickets.acceptTicket", false)}
-            >
-              דחה
-            </Button>
-          </Badge>
-        </Box>
-      ) : null}
-
-      {ticket?.ApproveStatus === "בטיפול" ? (
+      {ticket?.ApproveStatus === "בטיפול" && !isPag(tickets ?? {}, ticket) ? (
         <>
-          {" "}
+          <Box sx={{ display: "flex", justifyContent: "space-around" }}>
+            <Badge
+              badgeContent="✓"
+              color="primary"
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              sx={{
+                ".MuiBadge-badge": {
+                  top: "20%",
+                  right: "5%",
+                  border: `2px solid ${theme.palette.background.paper}`,
+                  padding: "0 4px",
+                  width: "2rem",
+                  height: "2rem",
+                  borderRadius: "30px",
+                },
+              }}
+              invisible={!state.viewTickets.acceptTicket}
+            >
+              <Button
+                color="secondary"
+                variant="contained"
+                sx={{ px: 8, fontSize: "150%" }}
+                onClick={() => setFieldValue("viewTickets.acceptTicket", true)}
+              >
+                אשר
+              </Button>
+            </Badge>
+            <Badge
+              badgeContent="✓"
+              color="primary"
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              sx={{
+                ".MuiBadge-badge": {
+                  top: "20%",
+                  right: "5%",
+                  border: `2px solid ${theme.palette.background.paper}`,
+                  padding: "0 4px",
+                  width: "2rem",
+                  height: "2rem",
+                  borderRadius: "30px",
+                },
+              }}
+              invisible={state.viewTickets.acceptTicket}
+            >
+              <Button
+                color="error"
+                variant="contained"
+                sx={{ px: 8, fontSize: "150%" }}
+                onClick={() => setFieldValue("viewTickets.acceptTicket", false)}
+              >
+                דחה
+              </Button>
+            </Badge>
+          </Box>
           {state.viewTickets.acceptTicket ? (
             <>
               <Typography
@@ -211,29 +211,29 @@ export default function TicketModal({
                   checkIfNumeric(setFieldValue, e.target.value);
                 }}
               />
+              <Button
+                color="secondary"
+                variant="contained"
+                sx={{
+                  fontSize: "150%",
+                  mt: 5,
+                  borderRadius: "12px",
+                  py: 1.5,
+                  mb: 8,
+                }}
+                fullWidth
+                disabled={
+                  state.viewTickets.acceptTicket &&
+                  state.viewTickets.entryCode.length < 5
+                }
+                onClick={() =>
+                  updateStatus(ticket.IDPerson, state.viewTickets.entryCode)
+                }
+              >
+                הגש תשובה לבקשה
+              </Button>
             </>
           ) : null}
-          <Button
-            color="secondary"
-            variant="contained"
-            sx={{
-              fontSize: "150%",
-              mt: 5,
-              borderRadius: "12px",
-              py: 1.5,
-              mb: 8,
-            }}
-            fullWidth
-            disabled={
-              state.viewTickets.acceptTicket &&
-              state.viewTickets.entryCode.length < 5
-            }
-            onClick={() =>
-              updateStatus(ticket.IDPerson, state.viewTickets.entryCode)
-            }
-          >
-            הגש תשובה לבקשה
-          </Button>
         </>
       ) : null}
     </Drawer>

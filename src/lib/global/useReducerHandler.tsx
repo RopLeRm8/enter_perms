@@ -19,11 +19,11 @@ import LockPersonIcon from "@mui/icons-material/LockPerson";
 import MilitaryTechIcon from "@mui/icons-material/MilitaryTech";
 import PlayLessonIcon from "@mui/icons-material/PlayLesson";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
-import useValidate from "./useValidate";
+import useValidate from "../hooks/clientticket/useValidate";
 import { INilve } from "@/types/ui";
 import { NotificationContext } from "@/contexts/NotificationContext";
 import { useStateValue } from "@/providers/StateProvider";
-import useSaveTicket from "./useSaveTicket";
+import useSaveTicket from "../hooks/clientticket/useSaveTicket";
 
 const FIELDLABELS: { [key: string]: string } = {
   firstName: "שם פרטי",
@@ -130,7 +130,16 @@ export default function useReducerHandler() {
   const setFieldValue = useCallback(
     (
       fieldPath: string,
-      value: string | Date | INilve[] | boolean | IStateTransformed
+      value:
+        | string
+        | Date
+        | INilve[]
+        | boolean
+        | IStateTransformed
+        | Record<string, IStateTransformed[]>
+        | Record<string, IStateTransformed[]>
+        | null
+        | HTMLButtonElement
     ) => {
       dispatch({ type: "SET_FIELD_VALUE", payload: { fieldPath, value } });
     },
@@ -359,7 +368,7 @@ export default function useReducerHandler() {
     setIsError(false);
     resetReducer();
     setFieldValue("suggestionModalOpen", false);
-  }, [saveticketData, setNotif, setIsError, resetReducer]);
+  }, [saveticketData, setNotif, setIsError, resetReducer, setFieldValue]);
 
   return {
     state,

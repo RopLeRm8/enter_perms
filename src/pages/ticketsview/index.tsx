@@ -17,28 +17,30 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { GetServerSidePropsContext } from "next";
 import TicketModal from "./ticketmodal";
-import useReducerHandler from "@/lib/hooks/clientticket/useReducerHandler";
+import useReducerHandler from "@/lib/global/useReducerHandler";
 import { useStateValue } from "@/providers/StateProvider";
 import useModalUtils from "@/lib/hooks/viewticket/useModalUtils";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import useFilter from "@/lib/hooks/viewticket/useFilter";
+import MilitaryTechIcon from "@mui/icons-material/MilitaryTech";
+import EmojiPeopleIcon from "@mui/icons-material/EmojiPeople";
+import UpdateDisabledIcon from "@mui/icons-material/UpdateDisabled";
 
 export default function TicketsView({ tickets, error }: ITicketsView) {
   const theme = useTheme();
   const { setFieldValue } = useReducerHandler();
   const [state] = useStateValue();
-  const { filterById, filterByDate } = useFilter();
-  const filteredTickets = filterById(tickets, state.viewTickets.inputValue);
-  const { groupTicketsByStatus, StatusToIcon } = useModalUtils();
-  const groupedTickets = groupTicketsByStatus(filteredTickets);
+  const { StatusToIcon, handleSort } = useModalUtils(tickets);
+  const { filterByTafkid } = useFilter();
   return (
     <>
       <TicketModal
         ticket={state.viewTickets.openedTicket}
         open={state.viewTickets.ticketModalOpen}
         entryCode={state.viewTickets.entryCode}
-        tickets={groupedTickets}
+        tickets={state.viewTickets.groupedTickets}
       />
       {error ? <Typography>{error}</Typography> : null}
       {!error && (
@@ -52,48 +54,141 @@ export default function TicketsView({ tickets, error }: ITicketsView) {
           elevation={5}
         >
           <Box sx={{ display: "flex", gap: "2rem" }}>
-            <Box>
+            <Box sx={{ alignSelf: "end" }}>
               <IconButton
                 onClick={(e) =>
                   setFieldValue("viewTickets.menuEl", e.currentTarget)
                 }
               >
-                <FilterListIcon />
+                <FilterListIcon sx={{ color: theme.palette.primary.main }} />
               </IconButton>
               <Menu
                 anchorEl={state.viewTickets.menuEl}
                 open={!!state.viewTickets.menuEl}
                 onClose={() => setFieldValue("viewTickets.menuEl", null)}
+                sx={{ direction: "rtl" }}
               >
-                <MenuItem>סדר לפי תאריך (עולה)</MenuItem>
-                <MenuItem>סדר לפי תאריך (יורד)</MenuItem>
+                <MenuItem
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                  disableTouchRipple
+                >
+                  <UpdateDisabledIcon
+                    sx={{ color: theme.palette.primary.main }}
+                  />
+                  <Typography
+                    sx={{
+                      color: theme.palette.primary.main,
+                      whiteSpace: "nowrap",
+                      fontSize: "120%",
+                    }}
+                  >
+                    הצג בקשות עם פג תוקף
+                  </Typography>
+
+                  <Checkbox
+                    onChange={() =>
+                      setFieldValue(
+                        "viewTickets.showPag",
+                        !state.viewTickets.showPag
+                      )
+                    }
+                  />
+                </MenuItem>
+                <MenuItem
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                  disableTouchRipple
+                >
+                  <MilitaryTechIcon
+                    sx={{ color: theme.palette.primary.main }}
+                  />
+                  <Typography
+                    sx={{
+                      color: theme.palette.primary.main,
+                      fontSize: "120%",
+                    }}
+                  >
+                    הצג רק בקשות של חיילים
+                  </Typography>
+                  <Checkbox
+                    onChange={() =>
+                      setFieldValue(
+                        "viewTickets.groupedTickets",
+                        filterByTafkid(state.viewTickets.groupedTickets || {})
+                      )
+                    }
+                  />
+                </MenuItem>
+                <MenuItem disableTouchRipple>
+                  <EmojiPeopleIcon sx={{ color: theme.palette.primary.main }} />
+                  <Typography
+                    sx={{
+                      color: theme.palette.primary.main,
+                      fontSize: "120%",
+                      mr: 1,
+                    }}
+                  >
+                    הצג רק בקשות של אזרחים
+                  </Typography>
+                  <Checkbox
+                    onChange={() =>
+                      setFieldValue(
+                        "viewTickets.groupedTickets",
+                        filterByTafkid(state.viewTickets.groupedTickets || {})
+                      )
+                    }
+                  />
+                </MenuItem>
+                <MenuItem
+                  onClick={() => handleSort(true)}
+                  sx={{
+                    minWidth: "5rem",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    ml: 1,
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      color: theme.palette.primary.main,
+                      fontSize: "120%",
+                    }}
+                  >
+                    סדר לפי תאריך (עולה)
+                  </Typography>
+                  <ArrowUpwardIcon sx={{ color: theme.palette.primary.main }} />
+                </MenuItem>
+                <MenuItem
+                  onClick={() => handleSort(false)}
+                  sx={{
+                    minWidth: "5rem",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    ml: 1,
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      color: theme.palette.primary.main,
+                      fontSize: "120%",
+                    }}
+                  >
+                    סדר לפי תאריך (יורד)
+                  </Typography>
+                  <ArrowDownwardIcon
+                    sx={{ color: theme.palette.primary.main }}
+                  />
+                </MenuItem>
               </Menu>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: ".5rem",
-              }}
-            >
-              <Typography
-                sx={{
-                  color: theme.palette.primary.main,
-                  whiteSpace: "nowrap",
-                  fontSize: "120%",
-                }}
-              >
-                הצג בקשות עם פג תוקף
-              </Typography>
-              <Checkbox
-                onChange={() =>
-                  setFieldValue(
-                    "viewTickets.showPag",
-                    !state.viewTickets.showPag
-                  )
-                }
-              />
             </Box>
             <Box
               sx={{
@@ -170,7 +265,11 @@ export default function TicketsView({ tickets, error }: ITicketsView) {
       )}
       <Grid container direction="column" sx={{ px: 1 }}>
         {!error &&
-          Object.entries(groupedTickets).map(([status, ticketsInGroup]) => (
+          Object.entries(
+            state.viewTickets.groupedTickets
+              ? state.viewTickets.groupedTickets
+              : {}
+          ).map(([status, ticketsInGroup]) => (
             <>
               {(status === "פג תוקף" && state.viewTickets.showPag) ||
               status !== "פג תוקף" ? (
@@ -189,8 +288,8 @@ export default function TicketsView({ tickets, error }: ITicketsView) {
                     {StatusToIcon[status]}
                   </Typography>
 
-                  {ticketsInGroup.map((ticket, ticketIndex) => (
-                    <Grid item key={ticketIndex}>
+                  {ticketsInGroup.map((ticket) => (
+                    <Grid item key={`${ticket.IDPerson}`}>
                       <Paper
                         sx={{
                           background: "white",
@@ -221,7 +320,8 @@ export default function TicketsView({ tickets, error }: ITicketsView) {
                               תעודה מזהה: {ticket.IDPerson}
                             </Typography>
                             <Typography sx={{ fontSize: "130%" }}>
-                              שם מלא:{`${ticket.FirstName} ${ticket.LastName}`}
+                              שם מלא:
+                              {`${ticket.FirstName} ${ticket.LastName}`}
                             </Typography>
                             <Typography sx={{ fontSize: "130%" }}>
                               תפקיד:{ticket.HumenType}
@@ -300,7 +400,7 @@ export default function TicketsView({ tickets, error }: ITicketsView) {
   );
 }
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
+export async function getServerSideProps() {
   try {
     const data = await ServerPropsApi<IStateTransformed>({
       url: `http://localhost:3000/api/controllers/gettickets`,

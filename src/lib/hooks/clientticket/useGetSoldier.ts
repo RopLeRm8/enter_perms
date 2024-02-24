@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { useSendApiReq } from "../api/useSendApiReq";
 import { ISoldier } from "@/types/api";
-import useReducerHandler from "./useReducerHandler";
+import useReducerHandler from "../../global/useReducerHandler";
 
 export default function useGetSoldier() {
   const { request, data, loading } = useSendApiReq<ISoldier>();
