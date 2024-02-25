@@ -1,5 +1,5 @@
 import useReducerHandler from "@/lib/hooks/global/useReducerHandler";
-import useHandleModal from "@/lib/hooks/clientticket/useHandleModal";
+import useHandleModal from "@/lib/hooks/createticket/useHandleModal";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import { IAddModal, INilve } from "@/types/ui";
 import {

@@ -14,7 +14,7 @@ export default function useGetMenuItems() {
   const [state] = useStateValue();
   const theme = useTheme();
   const { handleTafkidSort, handleDateSort } = useUtils();
-  const menuItems = [
+  const MenuItems = [
     {
       label: "הצג בקשות עם פג תוקף",
       applyStyles: false,
@@ -56,37 +56,5 @@ export default function useGetMenuItems() {
     },
   ] as IMenuItems[];
 
-  return (
-    <>
-      {menuItems.map((item) => (
-        <MenuItem
-          key={item.label}
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            minWidth: item.applyStyles ? "5rem" : "0rem",
-            ml: item.applyStyles ? 2 : 0,
-          }}
-          disableTouchRipple
-          onClick={item.clickFunc}
-        >
-          {item.icon}
-          <Typography
-            sx={{
-              color: theme.palette.primary.main,
-              whiteSpace: "nowrap",
-              fontSize: "120%",
-              mr: 1,
-            }}
-          >
-            {item.label}
-          </Typography>
-          {item.checkedValue !== undefined ? (
-            <Checkbox checked={item.checkedValue} onChange={item.checkFunc} />
-          ) : null}
-        </MenuItem>
-      ))}
-    </>
-  );
+  return { MenuItems };
 }

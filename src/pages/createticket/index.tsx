@@ -1,7 +1,7 @@
 "use client";
 
 import useReducerHandler from "@/lib/hooks/global/useReducerHandler";
-import useHandleDates from "@/lib/hooks/clientticket/useHandleDates";
+import useHandleDates from "@/lib/hooks/createticket/useHandleDates";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import {
   Autocomplete,
@@ -24,17 +24,17 @@ import {
 import { ReactNode, useState } from "react";
 import AddModal from "./addmodal";
 import { INilve } from "@/types/ui";
-import usePassive from "@/lib/hooks/clientticket/usePassive";
-import useGetCars from "@/lib/hooks/clientticket/useGetCars";
+import usePassive from "@/lib/hooks/createticket/usePassive";
+import useGetCars from "@/lib/hooks/createticket/useGetCars";
 import { ICars } from "@/types/api";
-import useGetSoldier from "@/lib/hooks/clientticket/useGetSoldier";
-import useGetPrevTicket from "@/lib/hooks/clientticket/useGetPrevTicket";
+import useGetSoldier from "@/lib/hooks/createticket/useGetSoldier";
+import useGetPrevTicket from "@/lib/hooks/createticket/useGetPrevTicket";
 import SuggestModal from "./suggestmodal";
+import useUtils from "@/lib/hooks/createticket/useUtils";
 
 export default function ClientTicket() {
   const {
     state,
-    getFieldValue,
     nextStep,
     previousStep,
     steps,
@@ -54,6 +54,7 @@ export default function ClientTicket() {
   const { getSoldier, loading: soldierLoading } = useGetSoldier();
   const { getPreviousTicket, data: previousTicket } = useGetPrevTicket();
   const theme = useTheme();
+  const { calcTime } = useUtils(state);
   usePassive(open);
 
   return (
@@ -615,15 +616,7 @@ export default function ClientTicket() {
                 fontSize: "120%",
               }}
             >
-              אישור ל-
-              {Math.round(
-                (new Date(getFieldValue("approvalPeriod").endDate).getTime() -
-                  new Date(
-                    getFieldValue("approvalPeriod").startDate
-                  ).getTime()) /
-                  (1000 * 60 * 60 * 24)
-              ) + 1 || 1}{" "}
-              ימים
+              אישור ל-{calcTime()} ימים
             </Typography>
           </Box>
         ) : null}

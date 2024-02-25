@@ -19,11 +19,11 @@ import LockPersonIcon from "@mui/icons-material/LockPerson";
 import MilitaryTechIcon from "@mui/icons-material/MilitaryTech";
 import PlayLessonIcon from "@mui/icons-material/PlayLesson";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
-import useValidate from "../clientticket/useValidate";
+import useValidate from "../createticket/useValidate";
 import { INilve } from "@/types/ui";
 import { NotificationContext } from "@/contexts/NotificationContext";
 import { useStateValue } from "@/providers/StateProvider";
-import useSaveTicket from "../clientticket/useSaveTicket";
+import useSaveTicket from "../createticket/useSaveTicket";
 
 const FIELDLABELS: { [key: string]: string } = {
   firstName: "שם פרטי",
@@ -97,7 +97,7 @@ export default function useReducerHandler() {
     const currentStep = steps[state.currentStep];
     let isValid = true;
     if (currentStep.validateFn) {
-      const currentValue = getFieldValue(currentStep.fieldName);
+      const currentValue = state[currentStep.fieldName];
       if (isHayal() && state.currentStep == 2) {
         isValid = currentStep.validateFn(currentValue, "הזן מספר אישי");
       } else isValid = currentStep.validateFn(currentValue);
@@ -112,18 +112,18 @@ export default function useReducerHandler() {
     }
     return true;
   };
-  const isCurrentStep = (step: number): boolean => {
+  const isCurrentStep = (step: number) => {
     return state.currentStep == step;
   };
-  const isTaasia = (): boolean => {
-    return getFieldValue("requestFor") == "עובד תעשייה";
+  const isTaasia = () => {
+    return state.requestFor == "עובד תעשייה";
   };
 
-  const isOto = (): boolean => {
-    return getFieldValue("vehicleEntryApproval") == "כן";
+  const isOto = () => {
+    return state.vehicleEntryApproval == "כן";
   };
 
-  const isHayal = (value?: string): boolean => {
+  const isHayal = (value?: string) => {
     const val = value ?? state.requestFor;
     return steps[0].options.findIndex((opt) => opt.optionname === val) < 3;
   };
@@ -146,9 +146,6 @@ export default function useReducerHandler() {
     },
     [dispatch]
   );
-  const getFieldValue = (field: string) => {
-    return state[field];
-  };
 
   const steps = [
     {
@@ -312,7 +309,7 @@ export default function useReducerHandler() {
     },
   ] as IStep[];
 
-  const getSikum = (): ISikumEntry[] => {
+  const getSikum = () => {
     const sikum: ISikumEntry[] = [];
     Object.entries(state).forEach(([key, value]: [string, ISikumEntry]) => {
       const stepName: string | undefined = steps.find(
@@ -361,7 +358,7 @@ export default function useReducerHandler() {
 
   const resetReducer = useCallback(() => {
     dispatch({ type: "RESET" });
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (!saveticketData) return;
@@ -374,7 +371,6 @@ export default function useReducerHandler() {
   return {
     state,
     setFieldValue,
-    getFieldValue,
     nextStep,
     previousStep,
     steps,

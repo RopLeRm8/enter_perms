@@ -25,7 +25,7 @@ const StatusToIcon: { [key: string]: JSX.Element } = {
 export default function useUtils(tickets?: IStateTransformed[]) {
   const { filterById, filterByDate, filterByTafkid } = useFilter();
   const [state] = useStateValue();
-  const { setFieldValue } = useReducerHandler();
+  const { setFieldValue, steps } = useReducerHandler();
   const filteredTickets = useMemo(() => {
     if (!tickets) return;
     return filterById(tickets, state.viewTickets.inputValue);
@@ -108,6 +108,13 @@ export default function useUtils(tickets?: IStateTransformed[]) {
     []
   );
 
+  const personIsHayal = useCallback(
+    (val: string) => {
+      return steps[0].options.findIndex((opt) => opt.optionname === val) < 3;
+    },
+    [steps]
+  );
+
   const handleDateSort = useCallback(
     (ascending = false) => {
       const sortedTickets = filterByDate(
@@ -122,11 +129,12 @@ export default function useUtils(tickets?: IStateTransformed[]) {
   const handleTafkidSort = useCallback(
     (e: ChangeEvent<HTMLInputElement>, isHayal: boolean) => {
       const checked = e.target.checked;
-      const newSortSoldier = isHayal ? checked : state.viewTickets.sortSoldier;
-      const newSortEzrah = !isHayal ? checked : state.viewTickets.sortEzrah;
+      const newSortSoldier = isHayal ? checked : false;
+      const newSortEzrah = !isHayal ? checked : false;
 
-      if (isHayal) setFieldValue("viewTickets.sortSoldier", newSortSoldier);
-      if (!isHayal) setFieldValue("viewTickets.sortEzrah", newSortEzrah);
+      setFieldValue("viewTickets.sortSoldier", newSortSoldier);
+      setFieldValue("viewTickets.sortEzrah", newSortEzrah);
+
       setFieldValue(
         "viewTickets.sortCount",
         state.viewTickets.sortCount + (checked ? 1 : -1)
@@ -138,18 +146,21 @@ export default function useUtils(tickets?: IStateTransformed[]) {
           state.viewTickets.originalTickets
         );
         return;
-      }
-      setFieldValue(
-        "viewTickets.groupedTickets",
-        filterByTafkid(state.viewTickets.groupedTickets || {}, isHayal)
-      );
+      } else
+        setFieldValue(
+          "viewTickets.groupedTickets",
+          filterByTafkid(
+            state.viewTickets.originalTickets || {},
+            isHayal,
+            personIsHayal
+          )
+        );
     },
     [
+      personIsHayal,
       filterByTafkid,
       state.viewTickets.groupedTickets,
       state.viewTickets.originalTickets,
-      state.viewTickets.sortSoldier,
-      state.viewTickets.sortEzrah,
       setFieldValue,
       state.viewTickets.sortCount,
     ]
@@ -165,8 +176,6 @@ export default function useUtils(tickets?: IStateTransformed[]) {
     setFieldValue("viewTickets.groupedTickets", groupedTicketsMemo);
     setFieldValue("viewTickets.originalTickets", groupedTicketsMemo);
   }, [groupedTicketsMemo, setFieldValue]);
-
-  useEffect(() => {}, []);
 
   return {
     checkIfNumeric,

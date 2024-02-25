@@ -1,4 +1,4 @@
-import { formReducer, INITIALSTATE } from "@/lib/hooks/clientticket/useReducer";
+import { formReducer, INITIALSTATE } from "@/lib/hooks/global/useReducer";
 import { NotificationProvider } from "@/providers/NotificationProvider";
 import { StateProvider } from "@/providers/StateProvider";
 import { theme } from "@/providers/ThemeProvider";

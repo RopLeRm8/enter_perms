@@ -20,21 +20,14 @@ import {
 } from "@mui/material";
 import TicketModal from "./ticketmodal";
 import useReducerHandler from "@/lib/hooks/global/useReducerHandler";
-import { useStateValue } from "@/providers/StateProvider";
 import useUtils from "@/lib/hooks/viewticket/useUtils";
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import MilitaryTechIcon from "@mui/icons-material/MilitaryTech";
-import EmojiPeopleIcon from "@mui/icons-material/EmojiPeople";
-import UpdateDisabledIcon from "@mui/icons-material/UpdateDisabled";
 import useGetMenuItems from "@/lib/hooks/viewticket/useGetMenuItems";
 
 export default function TicketsView({ tickets, error }: ITicketsView) {
   const theme = useTheme();
-  const { setFieldValue } = useReducerHandler();
-  const [state] = useStateValue();
-  const { StatusToIcon, handleDateSort, handleTafkidSort } = useUtils(tickets);
-  const MenuItems = useGetMenuItems();
+  const { setFieldValue, state } = useReducerHandler();
+  const { StatusToIcon } = useUtils(tickets);
+  const { MenuItems } = useGetMenuItems();
   return (
     <>
       <TicketModal
@@ -81,7 +74,38 @@ export default function TicketsView({ tickets, error }: ITicketsView) {
                 onClose={() => setFieldValue("viewTickets.menuEl", null)}
                 sx={{ direction: "rtl" }}
               >
-                {MenuItems}
+                {MenuItems.map((item) => (
+                  <MenuItem
+                    key={item.label}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      minWidth: item.applyStyles ? "5rem" : "0rem",
+                      ml: item.applyStyles ? 2 : 0,
+                    }}
+                    disableTouchRipple
+                    onClick={item.clickFunc}
+                  >
+                    {item.icon}
+                    <Typography
+                      sx={{
+                        color: theme.palette.primary.main,
+                        whiteSpace: "nowrap",
+                        fontSize: "120%",
+                        mr: 1,
+                      }}
+                    >
+                      {item.label}
+                    </Typography>
+                    {item.checkedValue !== undefined ? (
+                      <Checkbox
+                        checked={item.checkedValue}
+                        onChange={item.checkFunc}
+                      />
+                    ) : null}
+                  </MenuItem>
+                ))}
               </Menu>
             </Box>
             <Box

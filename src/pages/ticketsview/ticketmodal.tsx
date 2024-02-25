@@ -24,9 +24,8 @@ export default function TicketModal({
 }: ITicketModal) {
   const extraTicketProps = useExtraTicketProps();
   const theme = useTheme();
-  const { setFieldValue } = useReducerHandler();
+  const { setFieldValue, state } = useReducerHandler();
   const { checkIfNumeric, pasteDivider, isPag } = useUtils();
-  const [state] = useStateValue();
   const { updateStatus } = useUpdateStatus(state.viewTickets.acceptTicket);
   return (
     <Drawer

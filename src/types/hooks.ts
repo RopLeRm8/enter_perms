@@ -92,8 +92,20 @@ interface IState {
 
 interface IUseGetSteps {
   state: IState;
-  setFieldValue: (fieldPath: string, value: string | Date | any[]) => void;
-  getFieldValue: (field: string) => any;
+  setFieldValue: (fieldPath: string, value: string | Date) => void;
+  getFieldValue: (
+    field: string
+  ) =>
+    | string
+    | number
+    | Date
+    | INilve[]
+    | boolean
+    | IStateTransformed
+    | Record<string, IStateTransformed[]>
+    | Record<string, IStateTransformed[]>
+    | null
+    | HTMLButtonElement;
   nextStep: () => void;
   previousStep: () => void;
   steps: IStep[];
