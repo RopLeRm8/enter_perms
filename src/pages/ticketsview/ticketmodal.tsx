@@ -1,6 +1,6 @@
-import useReducerHandler from "@/lib/global/useReducerHandler";
+import useReducerHandler from "@/lib/hooks/global/useReducerHandler";
 import useExtraTicketProps from "@/lib/hooks/viewticket/useExtraTicketProps";
-import useModalUtils from "@/lib/hooks/viewticket/useModalUtils";
+import useUtils from "@/lib/hooks/viewticket/useUtils";
 import useUpdateStatus from "@/lib/hooks/viewticket/useUpdateStatus";
 import { useStateValue } from "@/providers/StateProvider";
 import { ITicketModal } from "@/types/ui";
@@ -25,7 +25,7 @@ export default function TicketModal({
   const extraTicketProps = useExtraTicketProps();
   const theme = useTheme();
   const { setFieldValue } = useReducerHandler();
-  const { checkIfNumeric, pasteDivider, isPag } = useModalUtils();
+  const { checkIfNumeric, pasteDivider, isPag } = useUtils();
   const [state] = useStateValue();
   const { updateStatus } = useUpdateStatus(state.viewTickets.acceptTicket);
   return (

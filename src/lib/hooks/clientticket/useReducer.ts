@@ -46,7 +46,11 @@ export const INITIALSTATE: IState = {
     acceptTicket: true,
     showPag: false,
     menuEl: null,
-    groupedTickets: null
+    groupedTickets: null,
+    originalTickets: null,
+    sortCount: 0,
+    sortSoldier: false,
+    sortEzrah: false,
   },
 };
 

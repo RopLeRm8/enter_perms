@@ -1,6 +1,6 @@
 "use client";
 
-import useReducerHandler from "@/lib/global/useReducerHandler";
+import useReducerHandler from "@/lib/hooks/global/useReducerHandler";
 import useHandleDates from "@/lib/hooks/clientticket/useHandleDates";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import {

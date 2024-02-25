@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import useReducerHandler from "../../global/useReducerHandler";
+import useReducerHandler from "../global/useReducerHandler";
 import useHandleDates from "./useHandleDates";
 
 export default function usePassive(open: boolean) {

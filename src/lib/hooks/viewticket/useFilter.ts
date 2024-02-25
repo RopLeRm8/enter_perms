@@ -28,10 +28,10 @@ export default function useFilter() {
   );
 
   const filterByTafkid = useCallback(
-    (tickets: Record<string, IStateTransformed[]>) => {
+    (tickets: Record<string, IStateTransformed[]>, isHayal: boolean) => {
       const sortedTickets = Object.keys(tickets).reduce((acc, status) => {
-        const tafkidTickets = [...tickets[status]].filter(
-          (ticket) => ticket.HumenType === "מילואים"
+        const tafkidTickets = [...tickets[status]].filter((ticket) =>
+          isHayal ? ticket.HumenType === "מילואים" : ticket.HumenType === "אזרח"
         );
         if (tafkidTickets.length > 0) {
           acc[status] = tafkidTickets;

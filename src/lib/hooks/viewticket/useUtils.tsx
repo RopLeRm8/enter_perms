@@ -4,10 +4,12 @@ import { Divider } from "@mui/material";
 import HowToRegIcon from "@mui/icons-material/HowToReg";
 import DoDisturbIcon from "@mui/icons-material/DoDisturb";
 import TimerIcon from "@mui/icons-material/Timer";
-import { useCallback, useEffect, useMemo } from "react";
+import { ChangeEvent, useCallback, useEffect, useMemo } from "react";
 import useFilter from "./useFilter";
 import { useStateValue } from "@/providers/StateProvider";
-import useReducerHandler from "../../global/useReducerHandler";
+import useReducerHandler from "../global/useReducerHandler";
+import UpdateDisabledIcon from "@mui/icons-material/UpdateDisabled";
+
 const KeysToTexts: { [key: string]: string } = {
   HumenType: "פרטי בקשה",
   HaveCar: "פרטי אוטו",
@@ -18,9 +20,10 @@ const StatusToIcon: { [key: string]: JSX.Element } = {
   בטיפול: <TimerIcon sx={{ ml: 1 }} />,
   אושר: <HowToRegIcon sx={{ ml: 1 }} />,
   "לא אושר": <DoDisturbIcon sx={{ ml: 1 }} />,
+  "פג תוקף": <UpdateDisabledIcon sx={{ ml: 1 }} />,
 };
-export default function useModalUtils(tickets?: IStateTransformed[]) {
-  const { filterById, filterByDate } = useFilter();
+export default function useUtils(tickets?: IStateTransformed[]) {
+  const { filterById, filterByDate, filterByTafkid } = useFilter();
   const [state] = useStateValue();
   const { setFieldValue } = useReducerHandler();
   const filteredTickets = useMemo(() => {
@@ -105,7 +108,7 @@ export default function useModalUtils(tickets?: IStateTransformed[]) {
     []
   );
 
-  const handleSort = useCallback(
+  const handleDateSort = useCallback(
     (ascending = false) => {
       const sortedTickets = filterByDate(
         state.viewTickets.groupedTickets || {},
@@ -116,6 +119,42 @@ export default function useModalUtils(tickets?: IStateTransformed[]) {
     [state.viewTickets.groupedTickets, setFieldValue, filterByDate]
   );
 
+  const handleTafkidSort = useCallback(
+    (e: ChangeEvent<HTMLInputElement>, isHayal: boolean) => {
+      const checked = e.target.checked;
+      const newSortSoldier = isHayal ? checked : state.viewTickets.sortSoldier;
+      const newSortEzrah = !isHayal ? checked : state.viewTickets.sortEzrah;
+
+      if (isHayal) setFieldValue("viewTickets.sortSoldier", newSortSoldier);
+      if (!isHayal) setFieldValue("viewTickets.sortEzrah", newSortEzrah);
+      setFieldValue(
+        "viewTickets.sortCount",
+        state.viewTickets.sortCount + (checked ? 1 : -1)
+      );
+
+      if (!newSortSoldier && !newSortEzrah) {
+        setFieldValue(
+          "viewTickets.groupedTickets",
+          state.viewTickets.originalTickets
+        );
+        return;
+      }
+      setFieldValue(
+        "viewTickets.groupedTickets",
+        filterByTafkid(state.viewTickets.groupedTickets || {}, isHayal)
+      );
+    },
+    [
+      filterByTafkid,
+      state.viewTickets.groupedTickets,
+      state.viewTickets.originalTickets,
+      state.viewTickets.sortSoldier,
+      state.viewTickets.sortEzrah,
+      setFieldValue,
+      state.viewTickets.sortCount,
+    ]
+  );
+
   const groupedTicketsMemo = useMemo(() => {
     if (!filteredTickets) return;
     return groupTicketsByStatus(filteredTickets);
@@ -124,7 +163,10 @@ export default function useModalUtils(tickets?: IStateTransformed[]) {
   useEffect(() => {
     if (!groupedTicketsMemo) return;
     setFieldValue("viewTickets.groupedTickets", groupedTicketsMemo);
+    setFieldValue("viewTickets.originalTickets", groupedTicketsMemo);
   }, [groupedTicketsMemo, setFieldValue]);
+
+  useEffect(() => {}, []);
 
   return {
     checkIfNumeric,
@@ -132,6 +174,7 @@ export default function useModalUtils(tickets?: IStateTransformed[]) {
     pasteDivider,
     StatusToIcon,
     isPag,
-    handleSort,
+    handleDateSort,
+    handleTafkidSort,
   };
 }

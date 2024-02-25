@@ -5,6 +5,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import {
   Autocomplete,
+  Badge,
   Box,
   Button,
   Checkbox,
@@ -18,22 +19,22 @@ import {
   useTheme,
 } from "@mui/material";
 import TicketModal from "./ticketmodal";
-import useReducerHandler from "@/lib/global/useReducerHandler";
+import useReducerHandler from "@/lib/hooks/global/useReducerHandler";
 import { useStateValue } from "@/providers/StateProvider";
-import useModalUtils from "@/lib/hooks/viewticket/useModalUtils";
+import useUtils from "@/lib/hooks/viewticket/useUtils";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import useFilter from "@/lib/hooks/viewticket/useFilter";
 import MilitaryTechIcon from "@mui/icons-material/MilitaryTech";
 import EmojiPeopleIcon from "@mui/icons-material/EmojiPeople";
 import UpdateDisabledIcon from "@mui/icons-material/UpdateDisabled";
+import useGetMenuItems from "@/lib/hooks/viewticket/useGetMenuItems";
 
 export default function TicketsView({ tickets, error }: ITicketsView) {
   const theme = useTheme();
   const { setFieldValue } = useReducerHandler();
   const [state] = useStateValue();
-  const { StatusToIcon, handleSort } = useModalUtils(tickets);
-  const { filterByTafkid } = useFilter();
+  const { StatusToIcon, handleDateSort, handleTafkidSort } = useUtils(tickets);
+  const MenuItems = useGetMenuItems();
   return (
     <>
       <TicketModal
@@ -55,139 +56,32 @@ export default function TicketsView({ tickets, error }: ITicketsView) {
         >
           <Box sx={{ display: "flex", gap: "2rem" }}>
             <Box sx={{ alignSelf: "end" }}>
-              <IconButton
-                onClick={(e) =>
-                  setFieldValue("viewTickets.menuEl", e.currentTarget)
-                }
+              <Badge
+                badgeContent={state.viewTickets.sortCount}
+                color="primary"
+                componentsProps={{
+                  badge: {
+                    style: {
+                      fontSize: "90%",
+                    },
+                  },
+                }}
               >
-                <FilterListIcon sx={{ color: theme.palette.primary.main }} />
-              </IconButton>
+                <IconButton
+                  onClick={(e) =>
+                    setFieldValue("viewTickets.menuEl", e.currentTarget)
+                  }
+                >
+                  <FilterListIcon sx={{ color: theme.palette.primary.main }} />
+                </IconButton>
+              </Badge>
               <Menu
                 anchorEl={state.viewTickets.menuEl}
                 open={!!state.viewTickets.menuEl}
                 onClose={() => setFieldValue("viewTickets.menuEl", null)}
                 sx={{ direction: "rtl" }}
               >
-                <MenuItem
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                  disableTouchRipple
-                >
-                  <UpdateDisabledIcon
-                    sx={{ color: theme.palette.primary.main }}
-                  />
-                  <Typography
-                    sx={{
-                      color: theme.palette.primary.main,
-                      whiteSpace: "nowrap",
-                      fontSize: "120%",
-                    }}
-                  >
-                    הצג בקשות עם פג תוקף
-                  </Typography>
-
-                  <Checkbox
-                    onChange={() =>
-                      setFieldValue(
-                        "viewTickets.showPag",
-                        !state.viewTickets.showPag
-                      )
-                    }
-                  />
-                </MenuItem>
-                <MenuItem
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                  disableTouchRipple
-                >
-                  <MilitaryTechIcon
-                    sx={{ color: theme.palette.primary.main }}
-                  />
-                  <Typography
-                    sx={{
-                      color: theme.palette.primary.main,
-                      fontSize: "120%",
-                    }}
-                  >
-                    הצג רק בקשות של חיילים
-                  </Typography>
-                  <Checkbox
-                    onChange={() =>
-                      setFieldValue(
-                        "viewTickets.groupedTickets",
-                        filterByTafkid(state.viewTickets.groupedTickets || {})
-                      )
-                    }
-                  />
-                </MenuItem>
-                <MenuItem disableTouchRipple>
-                  <EmojiPeopleIcon sx={{ color: theme.palette.primary.main }} />
-                  <Typography
-                    sx={{
-                      color: theme.palette.primary.main,
-                      fontSize: "120%",
-                      mr: 1,
-                    }}
-                  >
-                    הצג רק בקשות של אזרחים
-                  </Typography>
-                  <Checkbox
-                    onChange={() =>
-                      setFieldValue(
-                        "viewTickets.groupedTickets",
-                        filterByTafkid(state.viewTickets.groupedTickets || {})
-                      )
-                    }
-                  />
-                </MenuItem>
-                <MenuItem
-                  onClick={() => handleSort(true)}
-                  sx={{
-                    minWidth: "5rem",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    ml: 1,
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      color: theme.palette.primary.main,
-                      fontSize: "120%",
-                    }}
-                  >
-                    סדר לפי תאריך (עולה)
-                  </Typography>
-                  <ArrowUpwardIcon sx={{ color: theme.palette.primary.main }} />
-                </MenuItem>
-                <MenuItem
-                  onClick={() => handleSort(false)}
-                  sx={{
-                    minWidth: "5rem",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    ml: 1,
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      color: theme.palette.primary.main,
-                      fontSize: "120%",
-                    }}
-                  >
-                    סדר לפי תאריך (יורד)
-                  </Typography>
-                  <ArrowDownwardIcon
-                    sx={{ color: theme.palette.primary.main }}
-                  />
-                </MenuItem>
+                {MenuItems}
               </Menu>
             </Box>
             <Box
@@ -210,6 +104,17 @@ export default function TicketsView({ tickets, error }: ITicketsView) {
               <Autocomplete
                 options={tickets.map((ticket) => ticket.IDPerson)}
                 value={state.viewTickets.inputValue}
+                renderOption={(props, opt) => (
+                  <Typography
+                    {...props}
+                    sx={{
+                      border: `1px solid ${theme.palette.primary.main}`,
+                      fontSize: "110%",
+                    }}
+                  >
+                    {opt}
+                  </Typography>
+                )}
                 renderInput={(props) => (
                   <TextField
                     dir="rtl"

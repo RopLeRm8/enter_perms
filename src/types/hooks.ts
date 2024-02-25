@@ -1,5 +1,6 @@
 import { AxiosRequestConfig } from "axios";
 import { INilve } from "./ui";
+import { ChangeEvent } from "react";
 
 interface IOptions {
   optionname: string;
@@ -11,6 +12,7 @@ interface IAction {
     fieldPath: string;
     value:
       | string
+      | number
       | Date
       | INilve[]
       | boolean
@@ -47,6 +49,10 @@ interface IViewTickets {
   showPag: boolean;
   menuEl: HTMLButtonElement | null;
   groupedTickets: Record<string, IStateTransformed[]> | null;
+  originalTickets: Record<string, IStateTransformed[]> | null;
+  sortCount: number;
+  sortSoldier: boolean;
+  sortEzrah: boolean;
 }
 interface IState {
   [key: string]: any;
@@ -141,6 +147,15 @@ interface IStateTransformed {
   CreatorUsername: string;
 }
 
+interface IMenuItems {
+  label: string;
+  applyStyles: boolean;
+  icon: JSX.Element;
+  checkFunc?: (e: ChangeEvent<HTMLInputElement>) => void;
+  clickFunc?: () => void;
+  checkedValue?: boolean;
+}
+
 export type {
   IStep,
   IViewTickets,
@@ -154,4 +169,5 @@ export type {
   IUseApiResponse,
   IStateToDBMap,
   IStateTransformed,
+  IMenuItems,
 };
