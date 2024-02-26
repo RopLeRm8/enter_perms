@@ -200,8 +200,9 @@ export default function TicketsView({ tickets, error }: ITicketsView) {
               : {}
           ).map(([status, ticketsInGroup]) => (
             <>
-              {(status === "פג תוקף" && state.viewTickets.showPag) ||
-              status !== "פג תוקף" ? (
+              {((status === "פג תוקף" && state.viewTickets.showPag) ||
+                status !== "פג תוקף") &&
+              ticketsInGroup.length > 0 ? (
                 <Box key={status}>
                   <Typography
                     sx={{

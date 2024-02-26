@@ -2,15 +2,17 @@ import useReducerHandler from "@/lib/hooks/global/useReducerHandler";
 import useExtraTicketProps from "@/lib/hooks/viewticket/useExtraTicketProps";
 import useUtils from "@/lib/hooks/viewticket/useUtils";
 import useUpdateStatus from "@/lib/hooks/viewticket/useUpdateStatus";
-import { useStateValue } from "@/providers/StateProvider";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { ITicketModal } from "@/types/ui";
 import {
   Badge,
   Box,
   Button,
+  CircularProgress,
   Divider,
   Drawer,
   Grid,
+  IconButton,
   TextField,
   Typography,
   useTheme,
@@ -25,8 +27,11 @@ export default function TicketModal({
   const extraTicketProps = useExtraTicketProps();
   const theme = useTheme();
   const { setFieldValue, state } = useReducerHandler();
-  const { checkIfNumeric, pasteDivider, isPag } = useUtils();
-  const { updateStatus } = useUpdateStatus(state.viewTickets.acceptTicket);
+  const { checkIfNumeric, pasteDivider, isPag, handleCopyToClipboard } =
+    useUtils();
+  const { updateStatus, loading } = useUpdateStatus(
+    state.viewTickets.acceptTicket
+  );
   return (
     <Drawer
       open={open}
@@ -79,6 +84,22 @@ export default function TicketModal({
                       whiteSpace: "normal",
                     }}
                   >
+                    <IconButton
+                      onClick={() =>
+                        handleCopyToClipboard(
+                          typeof value !== "object"
+                            ? value.toString()
+                            : (value as object as { data: number[] })
+                                .data[0] === 0
+                            ? "לא"
+                            : "כן"
+                        )
+                      }
+                    >
+                      <ContentCopyIcon
+                        sx={{ color: theme.palette.primary.main }}
+                      />
+                    </IconButton>
                     {typeof value !== "object" ? (
                       <>{value}</>
                     ) : (
@@ -108,7 +129,12 @@ export default function TicketModal({
       />
       {ticket?.ApproveStatus === "בטיפול" && !isPag(tickets ?? {}, ticket) ? (
         <>
-          <Box sx={{ display: "flex", justifyContent: "space-around" }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-around",
+            }}
+          >
             <Badge
               badgeContent="✓"
               color="primary"
@@ -210,29 +236,51 @@ export default function TicketModal({
                   checkIfNumeric(setFieldValue, e.target.value);
                 }}
               />
-              <Button
-                color="secondary"
-                variant="contained"
-                sx={{
-                  fontSize: "150%",
-                  mt: 5,
-                  borderRadius: "12px",
-                  py: 1.5,
-                  mb: 8,
-                }}
-                fullWidth
-                disabled={
-                  state.viewTickets.acceptTicket &&
-                  state.viewTickets.entryCode.length < 5
-                }
-                onClick={() =>
-                  updateStatus(ticket.IDPerson, state.viewTickets.entryCode)
-                }
-              >
-                הגש תשובה לבקשה
-              </Button>
             </>
           ) : null}
+          <Button
+            color="secondary"
+            variant="contained"
+            sx={{
+              fontSize: "150%",
+              mt: 5,
+              borderRadius: "12px",
+              py: 1.5,
+              mb: 8,
+            }}
+            fullWidth
+            disabled={
+              (state.viewTickets.acceptTicket &&
+                state.viewTickets.entryCode.length < 5) ||
+              loading
+            }
+            onClick={() =>
+              updateStatus(ticket.IDPerson, state.viewTickets.entryCode)
+            }
+          >
+            {state.viewTickets.acceptTicket && loading ? (
+              <Box sx={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                <Typography
+                  sx={{
+                    direction: "rtl",
+                    fontSize: "85%",
+                  }}
+                >
+                  מעלה בקשה...
+                </Typography>
+                <CircularProgress
+                  sx={{
+                    color: theme.palette.primary.main,
+                  }}
+                  size={20}
+                  disableShrink
+                  thickness={4}
+                />
+              </Box>
+            ) : (
+              <>אשר</>
+            )}
+          </Button>
         </>
       ) : null}
     </Drawer>

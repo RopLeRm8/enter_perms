@@ -13,7 +13,7 @@ export default async function UpdateStatus(
       { ApproveStatus: isAccept ? "אושר" : "לא אושר" },
       { where: { IDPerson: personId } }
     );
-    res.status(200).json({ data: "ok" });
+    res.status(200).json({ data: personId });
   } catch (err) {
     res
       .status(503)

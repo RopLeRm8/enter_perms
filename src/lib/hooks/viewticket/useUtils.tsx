@@ -4,11 +4,18 @@ import { Divider } from "@mui/material";
 import HowToRegIcon from "@mui/icons-material/HowToReg";
 import DoDisturbIcon from "@mui/icons-material/DoDisturb";
 import TimerIcon from "@mui/icons-material/Timer";
-import { ChangeEvent, useCallback, useEffect, useMemo } from "react";
+import {
+  ChangeEvent,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+} from "react";
 import useFilter from "./useFilter";
 import { useStateValue } from "@/providers/StateProvider";
 import useReducerHandler from "../global/useReducerHandler";
 import UpdateDisabledIcon from "@mui/icons-material/UpdateDisabled";
+import { NotificationContext } from "@/contexts/NotificationContext";
 
 const KeysToTexts: { [key: string]: string } = {
   HumenType: "פרטי בקשה",
@@ -26,6 +33,9 @@ export default function useUtils(tickets?: IStateTransformed[]) {
   const { filterById, filterByDate, filterByTafkid } = useFilter();
   const [state] = useStateValue();
   const { setFieldValue, steps } = useReducerHandler();
+  const notifContext = useContext(NotificationContext);
+  const setNotif = notifContext.setMessage;
+  const setIsError = notifContext.setIsError;
   const filteredTickets = useMemo(() => {
     if (!tickets) return;
     return filterById(tickets, state.viewTickets.inputValue);
@@ -129,41 +139,98 @@ export default function useUtils(tickets?: IStateTransformed[]) {
   const handleTafkidSort = useCallback(
     (e: ChangeEvent<HTMLInputElement>, isHayal: boolean) => {
       const checked = e.target.checked;
-      const newSortSoldier = isHayal ? checked : false;
-      const newSortEzrah = !isHayal ? checked : false;
+      const currentSortValue = isHayal
+        ? state.viewTickets.sortSoldier
+        : state.viewTickets.sortEzrah;
+      const oppositeSortValue = isHayal
+        ? state.viewTickets.sortEzrah
+        : state.viewTickets.sortSoldier;
+      let newSortCount = state.viewTickets.sortCount;
 
-      setFieldValue("viewTickets.sortSoldier", newSortSoldier);
-      setFieldValue("viewTickets.sortEzrah", newSortEzrah);
+      if (checked && !currentSortValue && oppositeSortValue) {
+      } else if (!checked && currentSortValue) {
+        newSortCount -= 1;
+      } else if (checked && !currentSortValue && !oppositeSortValue) {
+        newSortCount += 1;
+      }
 
-      setFieldValue(
-        "viewTickets.sortCount",
-        state.viewTickets.sortCount + (checked ? 1 : -1)
-      );
+      setFieldValue("viewTickets.sortSoldier", isHayal ? checked : false);
+      setFieldValue("viewTickets.sortEzrah", !isHayal ? checked : false);
+      setFieldValue("viewTickets.sortCount", newSortCount);
 
-      if (!newSortSoldier && !newSortEzrah) {
+      if (
+        !isHayal
+          ? !checked
+          : !state.viewTickets.sortSoldier && !isHayal
+          ? !state.viewTickets.sortEzrah
+          : !checked
+      ) {
         setFieldValue(
           "viewTickets.groupedTickets",
           state.viewTickets.originalTickets
         );
         return;
-      } else
-        setFieldValue(
-          "viewTickets.groupedTickets",
-          filterByTafkid(
-            state.viewTickets.originalTickets || {},
-            isHayal,
-            personIsHayal
-          )
-        );
+      }
+      setFieldValue(
+        "viewTickets.groupedTickets",
+        filterByTafkid(
+          state.viewTickets.originalTickets || {},
+          isHayal,
+          personIsHayal
+        )
+      );
     },
     [
       personIsHayal,
       filterByTafkid,
-      state.viewTickets.groupedTickets,
       state.viewTickets.originalTickets,
-      setFieldValue,
+      state.viewTickets.sortSoldier,
+      state.viewTickets.sortEzrah,
       state.viewTickets.sortCount,
+      setFieldValue,
     ]
+  );
+
+  const handleCopyToClipboard = async (text: string) => {
+    await navigator.clipboard.writeText(text);
+    setNotif("העתקת את הטקסט בהצלחה");
+    setIsError(false);
+  };
+
+  const handleGroupUpdate = useCallback(
+    (personId: string, newStatus: "בטיפול" | "אושר" | "לא אושר") => {
+      if (!state.viewTickets.groupedTickets) return;
+      const updatedGroupedTickets = { ...state.viewTickets.groupedTickets };
+      let updated = false;
+      Object.entries(updatedGroupedTickets).forEach(([status, tickets]) => {
+        const ticketIndex = tickets.findIndex(
+          (ticket) => ticket.IDPerson === personId
+        );
+
+        if (ticketIndex > -1) {
+          const ticketToUpdate = tickets[ticketIndex];
+
+          if (ticketToUpdate.ApproveStatus !== newStatus) {
+            const updatedTickets = tickets.slice();
+            updatedTickets.splice(ticketIndex, 1);
+            updatedGroupedTickets[status] = updatedTickets;
+
+            if (!updatedGroupedTickets[newStatus]) {
+              updatedGroupedTickets[newStatus] = [];
+            }
+            ticketToUpdate.ApproveStatus = newStatus;
+            updatedGroupedTickets[newStatus].push(ticketToUpdate);
+
+            updated = true;
+          }
+        }
+      });
+
+      if (updated) {
+        setFieldValue("viewTickets.groupedTickets", updatedGroupedTickets);
+      }
+    },
+    [setFieldValue, state.viewTickets.groupedTickets]
   );
 
   const groupedTicketsMemo = useMemo(() => {
@@ -185,5 +252,7 @@ export default function useUtils(tickets?: IStateTransformed[]) {
     isPag,
     handleDateSort,
     handleTafkidSort,
+    handleCopyToClipboard,
+    handleGroupUpdate,
   };
 }

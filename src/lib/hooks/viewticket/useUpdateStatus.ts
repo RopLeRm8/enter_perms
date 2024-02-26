@@ -1,15 +1,18 @@
 import { NotificationContext } from "@/contexts/NotificationContext";
 import { useCallback, useContext, useEffect } from "react";
 import { useSendApiReq } from "../api/useSendApiReq";
+import useUtils from "./useUtils";
 
 export default function useUpdateStatus(isAccept: boolean) {
   const notifContext = useContext(NotificationContext);
   const setNotif = notifContext.setMessage;
   const setIsError = notifContext.setIsError;
-  const { request, data } = useSendApiReq();
+  const { request, data, loading, setData } = useSendApiReq<string>();
+  const { handleGroupUpdate } = useUtils();
 
   const updateStatus = useCallback(
     async (personId: string | undefined, entryCode: string) => {
+      console.log("yo");
       await request({
         url: "api/controllers/updatestatus",
         method: "POST",
@@ -25,10 +28,12 @@ export default function useUpdateStatus(isAccept: boolean) {
 
   useEffect(() => {
     if (data) {
+      handleGroupUpdate(data, isAccept ? "אושר" : "לא אושר");
       setNotif(isAccept ? "הבקשה אושרה בהצלחה" : "הבקשה נדחתה בהצלחה");
       setIsError(false);
+      setData(undefined);
     }
-  }, [data, setNotif, isAccept, setIsError]);
+  }, [data, isAccept, handleGroupUpdate, setNotif, setIsError, setData]);
 
-  return { updateStatus, data };
+  return { updateStatus, loading };
 }
