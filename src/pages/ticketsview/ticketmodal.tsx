@@ -14,6 +14,7 @@ import {
   Grid,
   IconButton,
   TextField,
+  Tooltip,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -84,22 +85,35 @@ export default function TicketModal({
                       whiteSpace: "normal",
                     }}
                   >
-                    <IconButton
-                      onClick={() =>
-                        handleCopyToClipboard(
-                          typeof value !== "object"
-                            ? value.toString()
-                            : (value as object as { data: number[] })
-                                .data[0] === 0
-                            ? "לא"
-                            : "כן"
-                        )
-                      }
+                    <Tooltip
+                      title="העתק"
+                      componentsProps={{
+                        tooltip: {
+                          sx: {
+                            fontSize: "120%",
+                            color: "white",
+                            background: theme.palette.primary.main,
+                          },
+                        },
+                      }}
                     >
-                      <ContentCopyIcon
-                        sx={{ color: theme.palette.primary.main }}
-                      />
-                    </IconButton>
+                      <IconButton
+                        onClick={() =>
+                          handleCopyToClipboard(
+                            typeof value !== "object"
+                              ? value.toString()
+                              : (value as object as { data: number[] })
+                                  .data[0] === 0
+                              ? "לא"
+                              : "כן"
+                          )
+                        }
+                      >
+                        <ContentCopyIcon
+                          sx={{ color: theme.palette.primary.main }}
+                        />
+                      </IconButton>
+                    </Tooltip>
                     {typeof value !== "object" ? (
                       <>{value}</>
                     ) : (
