@@ -19,11 +19,11 @@ import LockPersonIcon from "@mui/icons-material/LockPerson";
 import MilitaryTechIcon from "@mui/icons-material/MilitaryTech";
 import PlayLessonIcon from "@mui/icons-material/PlayLesson";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
-import useValidate from "../createticket/useValidate";
+import useValidate from "./useValidate";
 import { INilve } from "@/types/ui";
 import { NotificationContext } from "@/contexts/NotificationContext";
 import { useStateValue } from "@/providers/StateProvider";
-import useSaveTicket from "../createticket/useSaveTicket";
+import useSaveTicket from "./useSaveTicket";
 
 const FIELDLABELS: { [key: string]: string } = {
   firstName: "שם פרטי",
@@ -141,6 +141,7 @@ export default function useReducerHandler() {
         | Record<string, IStateTransformed[]>
         | null
         | HTMLButtonElement
+        | { [key: string]: boolean }
     ) => {
       dispatch({ type: "SET_FIELD_VALUE", payload: { fieldPath, value } });
     },

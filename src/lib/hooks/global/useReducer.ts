@@ -51,6 +51,7 @@ export const INITIALSTATE: IState = {
     sortCount: 0,
     sortSoldier: false,
     sortEzrah: false,
+    expandedStatuses: {},
   },
 };
 

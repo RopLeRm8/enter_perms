@@ -20,7 +20,8 @@ interface IAction {
       | Record<string, IStateTransformed[]>
       | Record<string, IStateTransformed[]>
       | null
-      | HTMLButtonElement;
+      | HTMLButtonElement
+      | { [key: string]: boolean };
   };
 }
 interface IStep {
@@ -53,6 +54,7 @@ interface IViewTickets {
   sortCount: number;
   sortSoldier: boolean;
   sortEzrah: boolean;
+  expandedStatuses: { [key: string]: boolean };
 }
 interface IState {
   [key: string]: any;

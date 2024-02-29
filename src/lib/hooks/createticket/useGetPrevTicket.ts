@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useSendApiReq } from "../api/useSendApiReq";
 import { IStateTransformed } from "@/types/hooks";
-import useReducerHandler from "../global/useReducerHandler";
+import useReducerHandler from "./useReducerHandler";
 import { STATETODB } from "@/config/statetodb";
 import useGetSoldier from "./useGetSoldier";
 

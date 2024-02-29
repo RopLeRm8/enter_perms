@@ -1,4 +1,4 @@
-import useReducerHandler from "@/lib/hooks/global/useReducerHandler";
+import useReducerHandler from "@/lib/hooks/createticket/useReducerHandler";
 import useExtraTicketProps from "@/lib/hooks/viewticket/useExtraTicketProps";
 import useUtils from "@/lib/hooks/viewticket/useUtils";
 import useUpdateStatus from "@/lib/hooks/viewticket/useUpdateStatus";

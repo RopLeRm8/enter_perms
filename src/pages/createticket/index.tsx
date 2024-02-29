@@ -1,6 +1,6 @@
 "use client";
 
-import useReducerHandler from "@/lib/hooks/global/useReducerHandler";
+import useReducerHandler from "@/lib/hooks/createticket/useReducerHandler";
 import useHandleDates from "@/lib/hooks/createticket/useHandleDates";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import {
@@ -811,10 +811,11 @@ export default function ClientTicket() {
               >
                 <Typography
                   sx={{
-                    fontSize: "130%",
+                    fontSize: "150%",
                     ml: 3,
                     whiteSpace: "nowrap",
                     color: theme.palette.primary.main,
+                    fontWeight: 600,
                   }}
                 >
                   :{Object.keys(entry)[0]}
@@ -826,15 +827,20 @@ export default function ClientTicket() {
                     <Box key={idx}>
                       <Box
                         sx={{
-                          color: theme.palette.secondary.main,
+                          color: theme.palette.primary.main,
                           direction: "rtl",
                           whiteSpace: "nowrap",
                           ml: 3,
-                          fontSize: "105%",
+                          fontSize: "140%",
                         }}
                       >
                         {typeof value === "object" ? (
-                          <Typography>{`${value.firstName} ${value.lastName}  ${
+                          <Typography
+                            sx={{
+                              fontSize: "100%",
+                              color: theme.palette.secondary.main,
+                            }}
+                          >{`${value.firstName} ${value.lastName}  ${
                             (Object.values(entry)[0].length as number) - 1 !==
                             idx
                               ? ","
@@ -845,9 +851,8 @@ export default function ClientTicket() {
                             {`${label}:`}
                             <Typography
                               sx={{
-                                fontSize: "105%",
-                                color: theme.palette.primary.main,
-                                fontWeight: 600,
+                                fontSize: "100%",
+                                color: theme.palette.secondary.main,
                               }}
                             >{`${value}`}</Typography>
                           </>
@@ -856,7 +861,12 @@ export default function ClientTicket() {
                     </Box>
                   ))
                 ) : (
-                  <Typography sx={{ color: theme.palette.secondary.main }}>
+                  <Typography
+                    sx={{
+                      color: theme.palette.secondary.main,
+                      fontSize: "130%",
+                    }}
+                  >
                     {Object.values(entry)[0] as ReactNode}
                   </Typography>
                 )}

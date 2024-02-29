@@ -13,7 +13,7 @@ import {
 } from "react";
 import useFilter from "./useFilter";
 import { useStateValue } from "@/providers/StateProvider";
-import useReducerHandler from "../global/useReducerHandler";
+import useReducerHandler from "../createticket/useReducerHandler";
 import UpdateDisabledIcon from "@mui/icons-material/UpdateDisabled";
 import { NotificationContext } from "@/contexts/NotificationContext";
 

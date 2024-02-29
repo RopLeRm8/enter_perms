@@ -1,5 +1,5 @@
 import useGetPrevTicket from "@/lib/hooks/createticket/useGetPrevTicket";
-import useReducerHandler from "@/lib/hooks/global/useReducerHandler";
+import useReducerHandler from "@/lib/hooks/createticket/useReducerHandler";
 import { IStateTransformed } from "@/types/hooks";
 import {
   Box,
