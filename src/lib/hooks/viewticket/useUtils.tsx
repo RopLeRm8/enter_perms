@@ -30,7 +30,7 @@ const StatusToIcon: { [key: string]: JSX.Element } = {
   "פג תוקף": <UpdateDisabledIcon sx={{ ml: 1 }} />,
 };
 export default function useUtils(tickets?: IStateTransformed[]) {
-  const { filterById, filterByDate, filterByTafkid } = useFilter();
+  const { filterByIdAndName, filterByDate, filterByTafkid } = useFilter();
   const [state] = useStateValue();
   const { setFieldValue, steps } = useReducerHandler();
   const notifContext = useContext(NotificationContext);
@@ -38,8 +38,17 @@ export default function useUtils(tickets?: IStateTransformed[]) {
   const setIsError = notifContext.setIsError;
   const filteredTickets = useMemo(() => {
     if (!tickets) return;
-    return filterById(tickets, state.viewTickets.inputValue);
-  }, [tickets, state.viewTickets.inputValue, filterById]);
+    return filterByIdAndName(
+      tickets,
+      state.viewTickets.idInputValue,
+      state.viewTickets.nameInputValue?.split(" ")
+    );
+  }, [
+    tickets,
+    state.viewTickets.idInputValue,
+    filterByIdAndName,
+    state.viewTickets.nameInputValue,
+  ]);
 
   const checkIfNumeric = useCallback(
     (

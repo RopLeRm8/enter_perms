@@ -144,11 +144,11 @@ export default function TicketsView({ tickets, error }: ITicketsView) {
                     fontSize: "120%",
                   }}
                 >
-                  חיפוש בקשרות לפי תעודה מזהה
+                  חיפוש בקשות לפי תעודה מזהה
                 </Typography>
                 <Autocomplete
                   options={tickets.map((ticket) => ticket.IDPerson)}
-                  value={state.viewTickets.inputValue}
+                  value={state.viewTickets.idInputValue}
                   noOptionsText="אין בקשות"
                   renderOption={(props, opt) => (
                     <Typography
@@ -167,7 +167,10 @@ export default function TicketsView({ tickets, error }: ITicketsView) {
                       {...props}
                       placeholder="מספר תעודה מזהה"
                       onChange={(e) =>
-                        setFieldValue("viewTickets.inputValue", e.target.value)
+                        setFieldValue(
+                          "viewTickets.idInputValue",
+                          e.target.value
+                        )
                       }
                       InputProps={{
                         ...props.InputProps,
@@ -196,9 +199,87 @@ export default function TicketsView({ tickets, error }: ITicketsView) {
                     },
                   }}
                   onChange={(_, nVal) =>
-                    setFieldValue("viewTickets.inputValue", nVal ?? "")
+                    setFieldValue("viewTickets.idInputValue", nVal ?? "")
                   }
                   sx={{ width: "100%" }}
+                />
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: ".5rem",
+                  ml: 5,
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: theme.palette.primary.main,
+                    whiteSpace: "nowrap",
+                    fontSize: "120%",
+                  }}
+                >
+                  חיפוש בקשות לפי שם
+                </Typography>
+                <Autocomplete
+                  options={tickets.map(
+                    (ticket) => ticket.FirstName + " " + ticket.LastName
+                  )}
+                  value={state.viewTickets.nameInputValue}
+                  noOptionsText="אין בקשות"
+                  renderOption={(props, opt) => (
+                    <Typography
+                      {...props}
+                      sx={{
+                        border: `1px solid ${theme.palette.primary.main}`,
+                        fontSize: "110%",
+                      }}
+                    >
+                      {opt}
+                    </Typography>
+                  )}
+                  renderInput={(props) => (
+                    <TextField
+                      dir="rtl"
+                      {...props}
+                      placeholder="שם מלא"
+                      onChange={(e) =>
+                        setFieldValue(
+                          "viewTickets.nameInputValue",
+                          e.target.value
+                        )
+                      }
+                      InputProps={{
+                        ...props.InputProps,
+                        sx: {
+                          color: theme.palette.primary.main,
+                        },
+                      }}
+                    />
+                  )}
+                  slotProps={{
+                    clearIndicator: {
+                      sx: {
+                        color: theme.palette.primary.main,
+                      },
+                    },
+                    paper: {
+                      sx: {
+                        direction: "rtl",
+                        color: theme.palette.primary.main,
+                      },
+                    },
+                    popupIndicator: {
+                      sx: {
+                        color: theme.palette.primary.main,
+                      },
+                    },
+                  }}
+                  onChange={(_, nVal) =>
+                    setFieldValue("viewTickets.nameInputValue", nVal ?? "")
+                  }
+                  sx={{ width: "130%" }}
                 />
               </Box>
             </Box>

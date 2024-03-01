@@ -39,7 +39,8 @@ export const INITIALSTATE: IState = {
   searchValue: "",
   suggestionModalOpen: true,
   viewTickets: {
-    inputValue: null,
+    idInputValue: null,
+    nameInputValue: null,
     ticketModalOpen: false,
     openedTicket: {},
     entryCode: "",

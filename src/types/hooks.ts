@@ -42,7 +42,8 @@ interface IStep {
 }
 
 interface IViewTickets {
-  inputValue: string | null;
+  idInputValue: string | null;
+  nameInputValue: string | null;
   ticketModalOpen: boolean;
   openedTicket: Partial<IStateTransformed>;
   entryCode: string;

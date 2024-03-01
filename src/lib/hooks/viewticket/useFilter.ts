@@ -2,10 +2,26 @@ import { IStateTransformed } from "@/types/hooks";
 import { useCallback } from "react";
 
 export default function useFilter() {
-  const filterById = useCallback(
-    (tickets: IStateTransformed[], input: string | null) => {
-      if (input === null) return tickets;
-      return tickets?.filter((ticket) => ticket.IDPerson.includes(input));
+  const filterByIdAndName = useCallback(
+    (
+      tickets: IStateTransformed[],
+      idinput: string | null,
+      nameInput: string[] | string | undefined
+    ) => {
+      if (
+        (idinput === null || idinput === "") &&
+        (nameInput === undefined || nameInput[0] === "")
+      )
+        return tickets;
+
+      return tickets.filter(
+        (ticket) =>
+          ticket.IDPerson.includes(idinput as string) ||
+          (nameInput &&
+            nameInput[0] !== "" &&
+            (ticket.FirstName.includes(nameInput[0]) ||
+              ticket.LastName.includes(nameInput[1])))
+      );
     },
     []
   );
@@ -49,5 +65,5 @@ export default function useFilter() {
     },
     []
   );
-  return { filterById, filterByDate, filterByTafkid };
+  return { filterByIdAndName, filterByDate, filterByTafkid };
 }
