@@ -6,14 +6,14 @@ export default async function UpdateStatus(
   res: NextApiResponse
 ) {
   try {
-    const { personId, isAccept } = req.body;
-    console.log(personId, isAccept);
-    if (!personId) return res.status(503).json({ error: "No person ID" });
+    const { id, isAccept, entryCode } = req.body;
+    console.log(id, isAccept);
+    if (!id) return res.status(503).json({ error: "No person ID" });
     await Entry.update(
-      { ApproveStatus: isAccept ? "אושר" : "לא אושר" },
-      { where: { IDPerson: personId } }
+      { ApproveStatus: isAccept ? "אושר" : "לא אושר", ApproveCode: entryCode },
+      { where: { id: id } }
     );
-    res.status(200).json({ data: personId });
+    res.status(200).json({ data: id });
   } catch (err) {
     res
       .status(503)

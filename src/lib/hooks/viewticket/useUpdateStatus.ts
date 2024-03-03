@@ -11,13 +11,12 @@ export default function useUpdateStatus(isAccept: boolean) {
   const { handleGroupUpdate } = useUtils();
 
   const updateStatus = useCallback(
-    async (personId: string | undefined, entryCode: string) => {
-      console.log("yo");
+    async (id: string | undefined, entryCode: string) => {
       await request({
         url: "api/controllers/updatestatus",
         method: "POST",
         data: {
-          personId,
+          id,
           isAccept,
           entryCode,
         },

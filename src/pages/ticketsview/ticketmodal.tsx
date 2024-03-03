@@ -18,6 +18,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import { IStateTransformed } from "@/types/hooks";
 
 export default function TicketModal({
   ticket,
@@ -63,7 +64,7 @@ export default function TicketModal({
                 extraTicketProps[key as keyof typeof extraTicketProps];
               return (
                 <Grid item key={key} xs={13}>
-                  {pasteDivider(key)}
+                  {pasteDivider(key as keyof IStateTransformed)}
                   <Box sx={{ display: "flex", gap: ".5rem" }}>
                     <span style={{ color: theme.palette.primary.main }}>
                       {extraProp?.icon}
@@ -268,9 +269,7 @@ export default function TicketModal({
                 state.viewTickets.entryCode.length < 5) ||
               loading
             }
-            onClick={() =>
-              updateStatus(ticket.IDPerson, state.viewTickets.entryCode)
-            }
+            onClick={() => updateStatus(ticket.id, state.viewTickets.entryCode)}
           >
             {state.viewTickets.acceptTicket && loading ? (
               <Box sx={{ display: "flex", alignItems: "center", gap: "1rem" }}>

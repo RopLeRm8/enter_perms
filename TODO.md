@@ -6,9 +6,9 @@ Project Description
 
 ### Todo
 
+- [ ] if takala yesh kaftor lishloah tiket ezra le avtahat meida mekomit  
 - [ ] Remove tz if hayal and remove mispar ishi if ezrah  
 - [ ] Add ezor avoda sivug  
-- [ ] Search by name  
 - [ ] Letapel ba behaya (duplicate key) be viewticket/index  
 
 ### In Progress
@@ -16,6 +16,8 @@ Project Description
 
 ### Done ✓
 
+- [x] add ishur code  
+- [x] Search by name  
 - [x] make sections collapse  
 - [x] finish api (loading and etc)  
 - [x] Sikum ba sof  

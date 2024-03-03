@@ -14,6 +14,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AttributionIcon from "@mui/icons-material/Attribution";
 import HailIcon from "@mui/icons-material/Hail";
 import FactoryIcon from "@mui/icons-material/Factory";
+import NumbersIcon from "@mui/icons-material/Numbers";
 
 export default function useExtraTicketProps() {
   const extraTicketProps: {
@@ -87,6 +88,10 @@ export default function useExtraTicketProps() {
     CreatorUsername: {
       label: "תעודה מזהה של המגיש בקשה",
       icon: <AttributionIcon />,
+    },
+    ApproveCode: {
+      label: "קוד אישור",
+      icon: <NumbersIcon />,
     },
   };
   return extraTicketProps;

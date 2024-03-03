@@ -348,7 +348,7 @@ export default function TicketsView({ tickets, error }: ITicketsView) {
                     unmountOnExit
                   >
                     {ticketsInGroup.map((ticket) => (
-                      <Grid item key={`${ticket.IDPerson}`}>
+                      <Grid item key={`${ticket.id}`}>
                         <Paper
                           sx={{
                             background: "white",

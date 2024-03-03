@@ -141,6 +141,7 @@ interface IUseApiResponse<T> {
 type IStateToDBMap = { [K in keyof IState]?: keyof IStateTransformed };
 
 interface IStateTransformed {
+  id?: string;
   IDPerson: string;
   HumenType: string;
   IndustryType: string;

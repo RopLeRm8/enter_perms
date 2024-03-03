@@ -17,10 +17,10 @@ import useReducerHandler from "../createticket/useReducerHandler";
 import UpdateDisabledIcon from "@mui/icons-material/UpdateDisabled";
 import { NotificationContext } from "@/contexts/NotificationContext";
 
-const KeysToTexts: { [key: string]: string } = {
+const KeysToTexts: { [K in keyof Partial<IStateTransformed>]: string } = {
   HumenType: "פרטי בקשה",
   HaveCar: "פרטי אוטו",
-  CreatorUsername: "פרטים נוספים",
+  ApproveCode: "פרטים נוספים",
 };
 
 const StatusToIcon: { [key: string]: JSX.Element } = {
@@ -90,7 +90,7 @@ export default function useUtils(tickets?: IStateTransformed[]) {
     []
   );
 
-  const pasteDivider = useCallback((key: string) => {
+  const pasteDivider = useCallback((key: keyof IStateTransformed) => {
     if (KeysToTexts[key]) {
       return (
         <Divider
@@ -117,9 +117,7 @@ export default function useUtils(tickets?: IStateTransformed[]) {
       let isPag = false;
       Object.entries(tickets).map((ticked) => {
         if (ticked[0] === "פג תוקף") {
-          isPag = !!ticked[1].find(
-            (ticked) => ticked.IDPerson === ticket?.IDPerson
-          );
+          isPag = !!ticked[1].find((ticked) => ticked.id === ticket?.id);
         }
       });
       return isPag;
@@ -207,14 +205,12 @@ export default function useUtils(tickets?: IStateTransformed[]) {
   };
 
   const handleGroupUpdate = useCallback(
-    (personId: string, newStatus: "בטיפול" | "אושר" | "לא אושר") => {
+    (id: string, newStatus: "בטיפול" | "אושר" | "לא אושר") => {
       if (!state.viewTickets.groupedTickets) return;
       const updatedGroupedTickets = { ...state.viewTickets.groupedTickets };
       let updated = false;
       Object.entries(updatedGroupedTickets).forEach(([status, tickets]) => {
-        const ticketIndex = tickets.findIndex(
-          (ticket) => ticket.IDPerson === personId
-        );
+        const ticketIndex = tickets.findIndex((ticket) => ticket.id === id);
 
         if (ticketIndex > -1) {
           const ticketToUpdate = tickets[ticketIndex];
