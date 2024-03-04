@@ -49,6 +49,10 @@ Entry.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    WorkAreaClassification: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     HaveCar: {
       type: DataTypes.TINYINT,
       allowNull: false,

@@ -1,13 +1,13 @@
 import { NextApiResponse, NextApiRequest } from "next";
 import Entry from "../models/entry";
+import { IUpdateStatus } from "@/types/api";
 
 export default async function UpdateStatus(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   try {
-    const { id, isAccept, entryCode } = req.body;
-    console.log(id, isAccept);
+    const { id, isAccept, entryCode }: IUpdateStatus = req.body;
     if (!id) return res.status(503).json({ error: "No person ID" });
     await Entry.update(
       { ApproveStatus: isAccept ? "אושר" : "לא אושר", ApproveCode: entryCode },

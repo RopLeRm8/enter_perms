@@ -24,18 +24,8 @@ import { INilve } from "@/types/ui";
 import { NotificationContext } from "@/contexts/NotificationContext";
 import { useStateValue } from "@/providers/StateProvider";
 import useSaveTicket from "./useSaveTicket";
-
-const FIELDLABELS: { [key: string]: string } = {
-  firstName: "שם פרטי",
-  lastName: "שם משפחה",
-  misparIshi: "תעודה מזהה",
-  phone: "מספר טלפון",
-  startDate: "תהליך ההתחלה",
-  endDate: "תהליך סיום",
-  vehicleNum: "מספר אוטו",
-  vehicleCol: "צבע האוטו",
-  vehicleType: "סוג אוטו",
-};
+import PhonelinkEraseIcon from "@mui/icons-material/PhonelinkErase";
+import { FIELDLABELS } from "@/config/fieldslabels";
 
 export default function useReducerHandler() {
   const [state, dispatch] = useStateValue();
@@ -60,15 +50,15 @@ export default function useReducerHandler() {
     }
     if (!isValid()) return;
     dispatch({ type: "NEXT_STEP" });
-    if (isCurrentStep(0) && !isTaasia()) {
+    if (isCurrentStep(findStep("requestFor")) && !isTaasia()) {
       setFieldValue("industryWorker", "");
       dispatch({ type: "NEXT_STEP" });
-    } else if (isCurrentStep(9) && !isOto()) {
+    } else if (isCurrentStep(findStep("vehicleEntryApproval")) && !isOto()) {
       setFieldValue("vehicleDetails", "");
       setFieldValue("nilvim", []);
       dispatch({ type: "NEXT_STEP" });
       dispatch({ type: "NEXT_STEP" });
-    } else if (isCurrentStep(4) && isHayal()) {
+    } else if (isCurrentStep(findStep("entryReason")) && isHayal()) {
       setFieldValue("escortDetails", "");
       dispatch({ type: "NEXT_STEP" });
     }
@@ -77,15 +67,15 @@ export default function useReducerHandler() {
   const previousStep = () => {
     dispatch({ type: "PREVIOUS_STEP" });
 
-    if (isCurrentStep(6) && isHayal()) {
+    if (isCurrentStep(findStep("classificationLevel")) && isHayal()) {
       dispatch({ type: "PREVIOUS_STEP" });
     }
-    if (isCurrentStep(2)) {
+    if (isCurrentStep(findStep("idNumber"))) {
       if (!isTaasia()) {
         dispatch({ type: "PREVIOUS_STEP" });
       }
     }
-    if (isCurrentStep(12)) {
+    if (isCurrentStep(findStep("sikum"))) {
       if (!isOto()) {
         dispatch({ type: "PREVIOUS_STEP" });
         dispatch({ type: "PREVIOUS_STEP" });
@@ -111,6 +101,10 @@ export default function useReducerHandler() {
       }
     }
     return true;
+  };
+
+  const findStep = (stepName: string) => {
+    return steps.findIndex((step) => step.fieldName === stepName);
   };
   const isCurrentStep = (step: number) => {
     return state.currentStep == step;
@@ -273,6 +267,26 @@ export default function useReducerHandler() {
       label: "איזור עבודה",
       fieldName: "workArea",
       validateFn: checkEzor,
+    },
+    {
+      name: "רמת סיווג של איזור עבודה",
+      label: "רמת סיווג של איזור עבודה",
+      fieldName: "workAreaClassification",
+      validateFn: checkOption,
+      options: [
+        {
+          optionname: "איזור מנהלתי",
+          icon: <NoEncryptionGmailerrorredIcon />,
+        },
+        {
+          optionname: "איזור מבצעי",
+          icon: <PhonelinkEraseIcon />,
+        },
+        {
+          optionname: "איזור הכי מסווג",
+          icon: <LockPersonIcon />,
+        },
+      ],
     },
     {
       name: "אישור כניסה עם רכב?",

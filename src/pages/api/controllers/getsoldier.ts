@@ -1,12 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Soldier from "../models/soldiers";
-import os from "os";
+import { ISoldierId } from "@/types/api";
 export default async function getsoldier(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   try {
-    const soldierId: { soldierId: string } = req.body;
+    const soldierId: ISoldierId = req.body;
     if (soldierId.soldierId.length < 7) return;
     const soldier = await Soldier.findOne({
       where: { id: soldierId.soldierId },

@@ -21,4 +21,28 @@ interface IRequestRecord {
   count: number;
   startTime: number;
 }
-export type { ICars, ISoldier, ISaveTicketData, IRequestRecord };
+
+interface ISoldierId {
+  soldierId: string;
+}
+
+interface IGetTicket {
+  idNumber: string;
+  isHayal: boolean;
+}
+
+interface IUpdateStatus {
+  id: string;
+  isAccept: boolean;
+  entryCode: string;
+}
+
+export type {
+  ICars,
+  ISoldier,
+  ISaveTicketData,
+  IRequestRecord,
+  ISoldierId,
+  IGetTicket,
+  IUpdateStatus,
+};

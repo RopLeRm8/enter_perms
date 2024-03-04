@@ -79,6 +79,7 @@ interface IState {
     endDate?: Date;
   };
   workArea: string;
+  workAreaClassification: string;
   vehicleEntryApproval: string;
   vehicleDetails: {
     vehicleNum: string;
@@ -153,6 +154,7 @@ interface IStateTransformed {
   StartDate: string;
   EndDate: string;
   WorkArea: string;
+  WorkAreaClassification: string;
   HaveCar: string | boolean;
   CarNumber: string;
   CarColor: string;

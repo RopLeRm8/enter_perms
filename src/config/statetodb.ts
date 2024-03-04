@@ -12,6 +12,7 @@ export const STATETODB: IStateToDBMap = {
   "approvalPeriod.startDate": "StartDate",
   "approvalPeriod.endDate": "EndDate",
   workArea: "WorkArea",
+  workAreaClassification: "WorkAreaClassification",
   vehicleEntryApproval: "HaveCar",
   "vehicleDetails.vehicleNum": "CarNumber",
   "vehicleDetails.vehicleCol": "CarColor",

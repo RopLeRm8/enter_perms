@@ -39,7 +39,7 @@ export default function useGetPrevTicket() {
         }
       });
     },
-    []
+    [getSoldier, setFieldValue]
   );
 
   return { setupStates, getPreviousTicket, data };

@@ -27,6 +27,7 @@ export const INITIALSTATE: IState = {
     endDate: undefined,
   },
   workArea: "",
+  workAreaClassification: "",
   vehicleEntryApproval: "",
   vehicleDetails: {
     vehicleNum: "",
